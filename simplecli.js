@@ -35,7 +35,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //        quietMode:  { short: "q", cnt: 0 },
 //        debug:      { short: "d", cnt: 0 },
 //        help:       { short: "h", cnt: 0 },
-//        @general:   { vals[ ] },                // accumulates naked arguments
+//        "@general": { vals: [ ] },               // accumulates naked arguments
 //    }
 //
 // The keys of the optionMap are the long options, the short members in the

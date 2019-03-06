@@ -2,10 +2,14 @@
   "name": "simplecli",
   "version": "0.0.1",
   "description": "A module for easily processing commandline arguments for most common cases.",
-  "main": "index.js",
+  "main": "simplecli.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Erich Waidthaler",
-  "license": "ISC"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Waidthaler/simplecli.git"
+  },
+  "author": "Eric O'Dell",
+  "license": "BSD-2-Clause"
 }
