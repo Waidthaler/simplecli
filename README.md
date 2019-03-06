@@ -1,4 +1,4 @@
-# simplecli
+# minicle
 A Node.js module for easily processing command line switches and arguments.
 
 There are scads of CLI argument processors out there, so why another one? Mostly 
@@ -9,7 +9,7 @@ anything else.
 
 ## Usage Example
 ```javascript
-var parse = require("simplecli");
+var parse = require("minicle");
 
 var optionMap = {
     infile:     { short: "i", vals: [ ] },
