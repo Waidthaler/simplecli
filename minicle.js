@@ -21,14 +21,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-
 //--------------------------------------------------------------------------
 // Simple commandline parser that supports short and long switches both with
 // and without arguments. Takes an optionMap like so:
 //
 //    var optionMap = {
 //        infile:     { short: "i", vals: [ ] },  // accumulates values
-//        outfiles:   { short: "o", vals: [ ] },
+//        outfiles:   { short: "o", vals: [ ], max: 1 }, // captures only one argument
 //        preamble:   { short: "p", vals: [ ] },
 //        sdlinclude: { short: "s", vals: [ ] },
 //        verbose:    { short: "v", cnt: 0 },     // accumulates appearance counts
@@ -49,13 +48,120 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // The optionMap is altered in place. Bails with a console error message if
 // malformed user input is encountered.
+//
+// Update 2019-03-15: Added support for git-style subcommands. To use, pass
+// options { subcommand: true }. In this case, optionMap gains an extra
+// level:
+//
+//     var optionMap = {
+//         add:     { ...original optionMap... },
+//         status:  { ...original optionMap... },
+//         "@none": { ...original optionMap... },
+//         "@all":  { ...original optionMap... },
+//     }
+//
+// The @none subcommand provides switches which are valid when no subcommand
+// is given. @all contains switches which are valid in all cases. Both are
+// optional.
+//
+// TODO: Document exceptions
 //--------------------------------------------------------------------------
 
-function parse(optionMap, options = null) {
+function Minicle(optionMap, options = null) {
 
+    if(options === null || options.subcommand === undefined || options.subcommand === false) {
+
+        this.main       = optionMap;
+        this.none       = null;
+        this.all        = null;
+        this.subcommand = false;
+        this.startArg   = 2;
+
+    } else {
+
+        this.all      = optionMap["@all"]  === undefined ? null : optionMap["@all"];
+
+        if(process.argv[2].substr(0, 1) == "-") {
+
+            optionMap["@subcommand"] = "@none";
+
+            this.startArg   = 2;
+            this.main       = optionMap["@none"];
+            this.none       = null;
+            this.subcommand = this.main;
+
+        } else if(optionMap[process.argv[2]] !== undefined) {
+
+            optionMap["@subcommand"] = process.argv[2];
+
+            this.startArg   = 3;
+            this.main       = optionMap[process.argv[2]];
+            this.none       = optionMap["@none"] === undefined ? null : optionMap["@none"];
+            this.subcommand = this.main;
+
+        } else {
+            throw new Error("FATAL ERROR: Unknown subcommand '" + process.argv[2] + "'.");
+        }
+
+    }
+
+    this.currentMap  = this.main;
+    this.subParse();
+
+}
+
+
+//------------------------------------------------------------------------------
+// Given a long switch, s, return the applicable optionMap entry, respecting the
+// precedence order: main, all, none.
+//------------------------------------------------------------------------------
+
+Minicle.prototype.resolveLong = function(s) {
+    if(this.main !== null && this.main[s] !== undefined) {
+        this.currentMap = this.main;
+        return this.main[s];
+    } else if(this.all !== null && this.all[s] !== undefined) {
+        this.currentMap = this.all;
+        return this.all[s];
+    } else if(this.none !== null && this.none[s] !== undefined) {
+        this.currentMap = this.none;
+        return this.none[s];
+    }
+    throw new Error("FATAL ERROR: Unknown commandline switch '--" + s + "'");
+}
+
+
+//------------------------------------------------------------------------------
+// Given a short switch, c, return the corresponding long switch, respecting the
+// precedence order: main, all, none.
+//------------------------------------------------------------------------------
+
+Minicle.prototype.resolveShort = function(c) {
+    var tables = [ this.main, this.all, this.none ];
+
+    for(var table of tables) {
+        if(table === null) {
+            continue;
+        }
+        for(var i in table) {
+            if(table[i].short == c.substr(1)) {
+                return i;
+            }
+        }
+    }
+
+    return null;
+}
+
+
+//------------------------------------------------------------------------------
+// Most of the work of parsing happens here.
+//------------------------------------------------------------------------------
+
+Minicle.prototype.subParse = function() {
     var currentArg = null;
 
-    for(var a = 2; a < process.argv.length; a++) {
+    for(var a = this.startArg; a < process.argv.length; a++) {
         var item   = process.argv[a];
         var match  = item.match(/^(-+)?(\S+)/);
         var dashes = match[1] === undefined ? 0 : match[1].length;
@@ -66,24 +172,16 @@ function parse(optionMap, options = null) {
             if(arg.length > 1) {   // Just split composite simple args
 
                 var args = arg.split("");
-
-                for(var i = 0; i < args.length; i++) {
+                for(var i = 0; i < args.length; i++)
                     process.argv.splice(a + 1 + i, 0, "-" + args[i]);
-                }
                 continue;
 
             } else {  // Convert simple args to long args
 
-                var complex = null;
-                for(var i in optionMap) {
-                    if(optionMap[i].short == arg) {
-                        complex = i;
-                        break;
-                    }
-                }
+                var complex = this.resolveShort(item);
 
                 if(complex === null) {
-                    console.log("FATAL ERROR: Unknown commandline switch '-" + arg + "'");
+                    throw new Error("FATAL ERROR: Unknown commandline switch '-" + arg + "'");
                 } else {
                     arg = complex;
                     dashes = 2;
@@ -94,36 +192,56 @@ function parse(optionMap, options = null) {
         }
 
         if(dashes == 2) {
-
-            if(optionMap[arg] === undefined)
-                console.log("FATAL ERROR: Unknown commandline switch '--" + arg + "'");
-
-            currentArg = arg;
-
-            if(optionMap[arg].cnt !== undefined)
-                optionMap[arg].cnt++;
-
+            var entry = this.resolveLong(arg);
+            if(entry.cnt !== undefined) {
+                currentArg = null;
+                entry.cnt++;
+            } else {
+                currentArg = arg;
+            }
             continue;
-
         }
 
         // If we get here, we're looking at an argument to a switch
 
-        if(optionMap[currentArg] === undefined) {
-            console.log("FATAL ERROR: Invalid commandline argument '" + item + "' supplied without preceding switch.");
-        } else if(optionMap[currentArg].vals === undefined) {
-            console.log("FATAL ERROR: Commandline switch --" + currentArg + "/-" + optionMap[currentArg].short + " does not take arguments.");
-        } else if(optionMap[currentArg].vals.length < (optionMap[currentArg].max === undefined ? Infinity : optionMap[currentArg].max)) {
-            optionMap[currentArg].vals.push(item);
-        } else {
-            if(optionMap["@general"] === undefined) {
-                optionMap["@general"] = { vals: [ ] };
+        if(currentArg === null) {
+
+            if(this.subcommand["@general"] !== undefined) {
+                this.subcommand["@general"].vals.push(item)
+            } else {
+                throw new Error("FATAL ERROR: Argument '" + item + "' not preceded by an option switch.");
             }
-            optionMap["@general"].vals.push(item);
+
+        } else if(entry.vals === undefined) {
+
+            throw new Error("FATAL ERROR: Commandline switch --" + currentArg + "/-" + entry.short + " does not take arguments.");
+
+        } else if(entry.max !== undefined) {
+
+            if(entry.vals.length < entry.max) {
+                this.currentMap[currentArg].vals.push(item);
+            } else {
+                if(this.currentMap["@general"] === undefined)
+                    throw new Error("FATAL ERROR: Argument '" + item + "' was not preceded by an option switch.");
+                this.currentMap["@general"].vals.push(item);
+            }
+
+        } else {
+
+            if(this.currentMap["@general"] === undefined)
+                throw new Error("FATAL ERROR: Argument '" + item + "' was not preceded by an option switch.");
+            this.currentMap[currentArg].vals.push(item);
+
         }
 
     }
 
+}
+
+
+
+function parse(optionMap, options) {
+    var m = new Minicle(optionMap, options);
 }
 
 module.exports = parse;
