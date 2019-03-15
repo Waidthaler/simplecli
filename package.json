@@ -12,7 +12,8 @@
   },
   "author": "Eric O'Dell",
   "license": "BSD-2-Clause",
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "dumper.js": "^1.3.1"
   }
 }

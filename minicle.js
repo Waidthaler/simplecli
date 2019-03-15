@@ -228,8 +228,8 @@ Minicle.prototype.subParse = function() {
 
         } else {
 
-            if(this.currentMap["@general"] === undefined)
-                throw new Error("FATAL ERROR: Argument '" + item + "' was not preceded by an option switch.");
+            if(this.currentMap[currentArg] === undefined)
+                throw new Error("FATAL ERROR: Argument '" + item + "' wasn't preceded by an option switch.");
             this.currentMap[currentArg].vals.push(item);
 
         }
