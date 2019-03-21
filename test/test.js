@@ -26,6 +26,7 @@ var tests = [
             charlie: { short: "c", cnt: 0 },
         },
         cli: [
+            [ "gonzo" ],
             [ "--able", "foo", "bar", "baz", "--baker", "quux", "--charlie" ],
             [ "--able", "foo", "bar", "baz", "--baker", "quux", "johnson", "--charlie" ],
             [ "-a", "foo", "bar", "baz", "-b", "quux", "-c" ],
@@ -81,13 +82,73 @@ var tests = [
                 golf:       { short: "g", vals: [ ] },
                 hotel:      { short: "h", vals: [ ], max: 1 },
                 india:      { short: "i", cnt: 0 },
-                "@general": { vals: [ ] }
             },
         },
         cli: [
-            [ "johnson", "-a", "fee", "fi", "fo", "fum", "-b", "kermit", "GONZO" ],
+            [ "johnson", "-a", "fee", "fi", "fo", "fum", "-b", "kermit", "GONZO", "-h", "hoober" ],
             [ "--delta", "foo", "bar", "-h", "one", "GONZO" ]
         ]
+    },
+
+    {
+        name: "metaMapWithBareNone",
+        subcommand: true,
+        optionMap: {
+            johnson: {
+                able:       { short: "a", vals: [ ] },
+                baker:      { short: "b", vals: [ ], max: 1 },
+                charlie:    { short: "c", cnt: 0 },
+                "@general": { vals: [ ] }
+            },
+            nixon: {
+                able:       { short: "a", vals: [ ] },
+                baker:      { short: "b", vals: [ ], max: 1 },
+                charlie:    { short: "c", cnt: 0 },
+            },
+            carter: {
+                able:       { short: "a", vals: [ ] },
+                baker:      { short: "b", vals: [ ], max: 1 },
+                charlie:    { short: "c", cnt: 0 },
+            },
+            "@none": {
+                "@general": { vals: [ ] }
+            },
+            "@all": {
+                golf:       { short: "g", vals: [ ] },
+                hotel:      { short: "h", vals: [ ], max: 1 },
+                india:      { short: "i", cnt: 0 },
+            },
+        },
+        cli: [
+            [ "johnson", "--golf", "tee", "-a", "fee", "fi", "fo", "fum", "-b", "kermit", "GONZO", "-h", "hoobler" ],
+            [ "--golf", "foo", "bar", "-h", "one", "GONZO" ]
+        ]
+    },
+
+    {
+        name: "simpleMetaMap",
+        subcommand: true,
+        optionMap: {
+            johnson: {
+                foo:        { short: "f", vals: [ ] },
+                bar:        { short: "b", vals: [ ], max: 1 },
+                "@general": { vals: [ ] }
+            },
+            nixon: {
+                foo:        { short: "f", vals: [ ] },
+                bar:        { short: "b", vals: [ ], max: 1 }
+            },
+            "@none": {
+                foo:        { short: "f", vals: [ ] },
+                bar:        { short: "b", vals: [ ], max: 1 },
+                "@general": { vals: [ ] }
+            }
+        },
+        cli: [
+            [ "johnson", "--foo", "baz", "quux", "--bar", "skorge", "twiddleyeah" ],
+            [ "nixon", "--foo", "baz", "quux", "--bar", "skorge", "twiddleyeah" ],
+            [ "--foo", "baz", "quux", "--bar", "skorge", "twiddleyeah" ],
+        ],
     }
 ];
 
@@ -122,9 +183,11 @@ for(var t = 0; t < tests.length; t++) {
         try {
             optionMapRefresh(tests[t].optionMap);
             parse(tests[t].optionMap, { subcommand: tests[t].subcommand});
-            dump(tests[t].optionMap);
         } catch(e) {
             console.log(e);
+            console.log("-------");
+        } finally {
+            dump(tests[t].optionMap);
         }
 
     }

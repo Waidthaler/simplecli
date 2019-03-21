@@ -84,16 +84,12 @@ function Minicle(optionMap, options = null) {
 
         if(process.argv[2].substr(0, 1) == "-") {
 
-            optionMap["@subcommand"] = "@none";
-
             this.startArg   = 2;
             this.main       = optionMap["@none"];
             this.none       = this.main;
             this.subcommand = this.main;
 
         } else if(optionMap[process.argv[2]] !== undefined) {
-
-            optionMap["@subcommand"] = process.argv[2];
 
             this.startArg   = 3;
             this.main       = optionMap[process.argv[2]];
@@ -118,6 +114,10 @@ function Minicle(optionMap, options = null) {
 //------------------------------------------------------------------------------
 
 Minicle.prototype.resolveLong = function(s) {
+
+    if(this.main === undefined)
+        throw new Error("FATAL ERROR: Missing subcommand.");
+
     if(this.main !== null && this.main[s] !== undefined) {
         this.currentMap = this.main;
         return this.main[s];
@@ -223,12 +223,12 @@ Minicle.prototype.subParse = function() {
                 this.currentMap[currentArg].vals.push(item);
             } else {
 
-                if(this.none !== undefined && this.none["@general"] != undefined) {
-                    this.none["@general"].vals.push(item);
-                } else if(this.currentMap["@general"] === undefined) {
-                    throw new Error("FATAL ERROR: Argument '" + item + "' was not preceded by an option switch.");
-                } else {
+                if(this.currentMap["@general"] !== undefined) {
                     this.currentMap["@general"].vals.push(item);
+                } else if(this.none !== undefined && this.none !== null && this.none["@general"] != undefined) {
+                    this.none["@general"].vals.push(item);
+                } else {
+                    throw new Error("FATAL ERROR: Argument '" + item + "' was not preceded by an option switch.");
                 }
 
             }
