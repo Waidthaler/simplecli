@@ -71,6 +71,7 @@ function Minicle(optionMap, options = null) {
 
     if(options === null || options.subcommand === undefined || options.subcommand === false) {
 
+        this.optionMap  = optionMap;
         this.main       = optionMap;
         this.none       = null;
         this.all        = null;
@@ -79,7 +80,7 @@ function Minicle(optionMap, options = null) {
 
     } else {
 
-        this.all      = optionMap["@all"]  === undefined ? null : optionMap["@all"];
+        this.all = optionMap["@all"]  === undefined ? null : optionMap["@all"];
 
         if(process.argv[2].substr(0, 1) == "-") {
 
@@ -87,7 +88,7 @@ function Minicle(optionMap, options = null) {
 
             this.startArg   = 2;
             this.main       = optionMap["@none"];
-            this.none       = null;
+            this.none       = this.main;
             this.subcommand = this.main;
 
         } else if(optionMap[process.argv[2]] !== undefined) {
@@ -202,12 +203,12 @@ Minicle.prototype.subParse = function() {
             continue;
         }
 
-        // If we get here, we're looking at an argument to a switch
+        // If we get here, we're looking at an arguments as opposed to switches
 
         if(currentArg === null) {
 
-            if(this.subcommand["@general"] !== undefined) {
-                this.subcommand["@general"].vals.push(item)
+            if(this.currentMap["@general"] !== undefined) {
+                this.currentMap["@general"].vals.push(item);
             } else {
                 throw new Error("FATAL ERROR: Argument '" + item + "' not preceded by an option switch.");
             }
@@ -218,15 +219,18 @@ Minicle.prototype.subParse = function() {
 
         } else if(entry.max !== undefined) {
 
-                console.log("currentArg: " + currentArg);
-                console.log("item: " + item);
-
             if(entry.vals.length < entry.max) {
                 this.currentMap[currentArg].vals.push(item);
             } else {
-                if(this.currentMap["@general"] === undefined)
+
+                if(this.none !== undefined && this.none["@general"] != undefined) {
+                    this.none["@general"].vals.push(item);
+                } else if(this.currentMap["@general"] === undefined) {
                     throw new Error("FATAL ERROR: Argument '" + item + "' was not preceded by an option switch.");
-                this.currentMap["@general"].vals.push(item);
+                } else {
+                    this.currentMap["@general"].vals.push(item);
+                }
+
             }
 
         } else {

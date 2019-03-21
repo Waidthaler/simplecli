@@ -19,6 +19,7 @@ var tests = [
 
     {
         name: "SimpleMap",
+        subcommand: false,
         optionMap: {
             able:    { short: "a", vals: [ ] },
             baker:   { short: "b", vals: [ ], max: 1 },
@@ -26,6 +27,7 @@ var tests = [
         },
         cli: [
             [ "--able", "foo", "bar", "baz", "--baker", "quux", "--charlie" ],
+            [ "--able", "foo", "bar", "baz", "--baker", "quux", "johnson", "--charlie" ],
             [ "-a", "foo", "bar", "baz", "-b", "quux", "-c" ],
             [ "-a", "foo", "-a", "bar", "-a", "baz", "--baker", "fnord", "-ccc" ],
         ]
@@ -33,6 +35,7 @@ var tests = [
 
     {
         name: "simpleMapGeneral",
+        subcommand: false,
         optionMap:  {
             able:       { short: "a", vals: [ ] },
             baker:      { short: "b", vals: [ ], max: 1 },
@@ -40,12 +43,17 @@ var tests = [
             "@general": { vals: [ ] }
         },
         cli: [
-
+            [ "gonzo" ],
+            [ "--able", "foo", "bar", "baz", "--baker", "quux", "--charlie" ],
+            [ "--able", "foo", "bar", "baz", "--baker", "quux", "johnson", "--charlie" ],
+            [ "-a", "foo", "bar", "baz", "-b", "quux", "-c" ],
+            [ "-a", "foo", "-a", "bar", "-a", "baz", "--baker", "fnord", "-ccc" ],
         ]
     },
 
     {
         name: "metaMap",
+        subcommand: true,
         optionMap: {
             johnson: {
                 able:       { short: "a", vals: [ ] },
@@ -77,7 +85,8 @@ var tests = [
             },
         },
         cli: [
-
+            [ "johnson", "-a", "fee", "fi", "fo", "fum", "-b", "kermit", "GONZO" ],
+            [ "--delta", "foo", "bar", "-h", "one", "GONZO" ]
         ]
     }
 ];
@@ -85,6 +94,8 @@ var tests = [
 
 function optionMapRefresh(map) {
     for(var k in map) {
+        if(k == 0)
+            continue;
         var curmap = map[k];
         if(curmap.vals !== undefined) {
             curmap.vals = [ ];
@@ -110,7 +121,7 @@ for(var t = 0; t < tests.length; t++) {
 
         try {
             optionMapRefresh(tests[t].optionMap);
-            parse(tests[t].optionMap);
+            parse(tests[t].optionMap, { subcommand: tests[t].subcommand});
             dump(tests[t].optionMap);
         } catch(e) {
             console.log(e);
@@ -119,21 +130,5 @@ for(var t = 0; t < tests.length; t++) {
     }
 }
 
-/*
-
-//var map = simpleMap;
-var map = simpleMapGeneral;
-//var map = metaMap;
-
-try {
-    parse(map);
-    //parse(map, {subcommand: true});
-} catch(e) {
-    console.log(e);
-}
-
-dump(map);
-
-*/
 
 
