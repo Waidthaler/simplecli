@@ -218,6 +218,9 @@ Minicle.prototype.subParse = function() {
 
         } else if(entry.max !== undefined) {
 
+                console.log("currentArg: " + currentArg);
+                console.log("item: " + item);
+
             if(entry.vals.length < entry.max) {
                 this.currentMap[currentArg].vals.push(item);
             } else {
