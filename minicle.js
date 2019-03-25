@@ -82,7 +82,11 @@ function Minicle(optionMap, options = null) {
 
         this.all = optionMap["@all"]  === undefined ? null : optionMap["@all"];
 
-        if(process.argv[2].substr(0, 1) == "-") {
+        if(process.argv[2] === undefined) {
+
+            return;
+
+        } else if(process.argv[2].substr(0, 1) == "-") {
 
             this.startArg   = 2;
             this.main       = optionMap["@none"];

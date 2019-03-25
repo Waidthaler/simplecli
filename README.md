@@ -1,4 +1,5 @@
-# minicle
+# minicle v1.0.3
+
 A Node.js module for easily processing command line switches and arguments.
 
 There are scads of CLI argument processors out there, so why another one? Mostly 
@@ -136,4 +137,7 @@ no subcommand. The `@all` options should __not__ include a `@general` entry.
 
 ## Changelog
 
+1.0.2: Fixed bug that threw an uncaught exception when no CLI arguments were given.
+
 1.0.1: Updated docs to include the necessary options for subcommands.
+
