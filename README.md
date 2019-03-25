@@ -124,7 +124,7 @@ var optionMap = {
 For minicle to recognize this, the `options` argument should include `subcommand: true`, e.g.
 
 ```javascript
-minicle(optionMap, { subcommand: true });
+parse(optionMap, { subcommand: true });
 ```
 
 The top-level keys are the subcommands, and their associated objects are the 
