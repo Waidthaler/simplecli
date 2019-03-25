@@ -99,6 +99,7 @@ function Minicle(optionMap, options = null) {
             this.main       = optionMap[process.argv[2]];
             this.none       = optionMap["@none"] === undefined ? null : optionMap["@none"];
             this.subcommand = this.main;
+            optionMap["@subcommand"] = process.argv[2];
 
         } else {
             throw new Error("FATAL ERROR: Unknown subcommand '" + process.argv[2] + "'.");

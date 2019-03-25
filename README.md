@@ -1,4 +1,4 @@
-# minicle v1.0.3
+# minicle v1.0.4
 
 A Node.js module for easily processing command line switches and arguments.
 
@@ -135,7 +135,12 @@ optional. The `@none` object specifies switches that can be used when no
 subcommand is given, and `@all` specifies switches that can be used with any or 
 no subcommand. The `@all` options should __not__ include a `@general` entry.
 
+If a subcommand is used, minicle will insert it into `optionMap` as the value
+of a key named `@subcommand`.
+
 ## Changelog
+
+1.0.4: Added `@subcommand` to `optionMap` results, documented same.
 
 1.0.2: Fixed bug that threw an uncaught exception when no CLI arguments were given.
 
