@@ -121,6 +121,12 @@ var optionMap = {
 };
 ```
 
+For minicle to recognize this, the `options` argument should include `subcommand: true`, e.g.
+
+```javascript
+minicle(optionMap, { subcommand: true });
+```
+
 The top-level keys are the subcommands, and their associated objects are the 
 same as the regular `optionMap` when not using subcommands. There are two 
 additional optional top-level entries, `@none` and `@all`, both of which are 
@@ -128,3 +134,6 @@ optional. The `@none` object specifies switches that can be used when no
 subcommand is given, and `@all` specifies switches that can be used with any or 
 no subcommand. The `@all` options should __not__ include a `@general` entry.
 
+## Changelog
+
+1.0.1: Updated docs to include the necessary options for subcommands.
