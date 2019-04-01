@@ -147,9 +147,20 @@ no subcommand. The `@all` options should __not__ include a `@general` entry.
 If a subcommand is used, minicle will insert it into `optionMap` as the value
 of a key named `@subcommand`.
 
+## TODO
+
+* Add -- GNU-style end-of-switches flag. The `max` and `@general` elements made
+  clear to me what the author of `getopts` was thinking.
+* _Much_ more testing.
+* Improved docs, more examples, maybe a tutorial. Make it as easy as possible
+  for people with different learning modalities to understand.
+* Update listings
+
 ## Changelog
 
 1.0.4: Added `@subcommand` to `optionMap` results, documented same.
+
+1.0.3: We don't talk about this anymore.
 
 1.0.2: Fixed bug that threw an uncaught exception when no CLI arguments were given.
 
