@@ -20,6 +20,7 @@ var tests = [
     {
         name: "SimpleMap",
         subcommand: false,
+        options: { doubleDash: true },
         optionMap: {
             able:    { short: "a", vals: [ ] },
             baker:   { short: "b", vals: [ ], max: 1 },
@@ -37,6 +38,7 @@ var tests = [
     {
         name: "simpleMapGeneral",
         subcommand: false,
+        options: { doubleDash: true },
         optionMap:  {
             able:       { short: "a", vals: [ ] },
             baker:      { short: "b", vals: [ ], max: 1 },
@@ -49,12 +51,14 @@ var tests = [
             [ "--able", "foo", "bar", "baz", "--baker", "quux", "johnson", "--charlie" ],
             [ "-a", "foo", "bar", "baz", "-b", "quux", "-c" ],
             [ "-a", "foo", "-a", "bar", "-a", "baz", "--baker", "fnord", "-ccc" ],
+            [ "-a", "foo", "-b", "bar", "--", "one", "two", "three", "four" ],
         ]
     },
 
     {
         name: "metaMap",
         subcommand: true,
+        options: { doubleDash: true },
         optionMap: {
             johnson: {
                 able:       { short: "a", vals: [ ] },
@@ -93,6 +97,7 @@ var tests = [
     {
         name: "metaMapWithBareNone",
         subcommand: true,
+        options: { doubleDash: true },
         optionMap: {
             johnson: {
                 able:       { short: "a", vals: [ ] },
@@ -128,6 +133,7 @@ var tests = [
     {
         name: "simpleMetaMap",
         subcommand: true,
+        options: { doubleDash: true },
         optionMap: {
             johnson: {
                 foo:        { short: "f", vals: [ ] },
@@ -182,7 +188,7 @@ for(var t = 0; t < tests.length; t++) {
 
         try {
             optionMapRefresh(tests[t].optionMap);
-            parse(tests[t].optionMap, { subcommand: tests[t].subcommand});
+            parse(tests[t].optionMap, { subcommand: tests[t].subcommand, doubleDash: true});
         } catch(e) {
             console.log(e);
             console.log("-------");

@@ -72,6 +72,10 @@ function Minicle(optionMap, options = null) {
     if(optionMap["@all"] !== undefined && optionMap["@all"]["@general"] !== undefined)
         delete optionMap["@all"]["@general"];
 
+    if(options !== null) {
+        this.doubleDash = options.doubleDash ? true : false;
+    }
+
     if(options === null || options.subcommand === undefined || options.subcommand === false) {
 
         this.optionMap  = optionMap;
@@ -164,6 +168,21 @@ Minicle.prototype.resolveShort = function(c) {
 
 
 //------------------------------------------------------------------------------
+// Takes care of shoving an argument into the appropriate @general receptacle.
+//------------------------------------------------------------------------------
+
+Minicle.prototype.addGeneral = function(item) {
+    if(this.currentMap["@general"] !== undefined) {
+        this.currentMap["@general"].vals.push(item);
+    } else if(this.none !== undefined && this.none !== null && this.none["@general"] != undefined) {
+        this.none["@general"].vals.push(item);
+    } else {
+        throw new Error("FATAL ERROR: Argument '" + item + "' was not preceded by an option switch.");
+    }
+}
+
+
+//------------------------------------------------------------------------------
 // Most of the work of parsing happens here.
 //------------------------------------------------------------------------------
 
@@ -175,6 +194,17 @@ Minicle.prototype.subParse = function() {
         var match  = item.match(/^(-+)?(\S+)/);
         var dashes = match[1] === undefined ? 0 : match[1].length;
         var arg    = match[2];
+
+        // New in 1.0.5: Minicle now supports the GNU-style "--" option, which
+        // halts processing of switch arguments and shunts everything into the
+        // appropriate @general vals.
+
+        if(process.argv[a] == "--" && this.doubleDash) {
+            a++;
+            while(a < process.argv.length)
+                this.addGeneral(process.argv[a++]);
+            return;
+        }
 
         if(dashes == 1) {
 
@@ -230,15 +260,7 @@ Minicle.prototype.subParse = function() {
             if(entry.vals.length < entry.max) {
                 this.currentMap[currentArg].vals.push(item);
             } else {
-
-                if(this.currentMap["@general"] !== undefined) {
-                    this.currentMap["@general"].vals.push(item);
-                } else if(this.none !== undefined && this.none !== null && this.none["@general"] != undefined) {
-                    this.none["@general"].vals.push(item);
-                } else {
-                    throw new Error("FATAL ERROR: Argument '" + item + "' was not preceded by an option switch.");
-                }
-
+                this.addGeneral(item);
             }
 
         } else {

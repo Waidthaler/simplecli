@@ -1,6 +1,6 @@
-# minicle v1.0.4
+# minicle v1.0.5
 
-A Node.js module for easily processing command line switches and arguments.
+Minicle is Node module for easily processing command line switches and arguments.
 
 There are scads of CLI argument processors out there, so why another one? Mostly 
 because the others aim to do too much and can be a pain to use when you just 
@@ -8,8 +8,16 @@ need something quick and simple. All it does is parse CLI options. It doesn't
 handle exotic edge cases, generate usage information, validate arguments, or 
 anything else.
 
-NEW: Minicle now supports git-style subcommands.
+NEW in v1.0.5: Minicle now supports GNU-style `--` end-of-switches.
 
+## Table of Contents
+
+* [Basic Usage](#basic-usage)
+* [Git-Style Subcommands](#subcommands)
+* [Todo](#todo)
+* [Changelog](#changelog)
+
+<a name="basic-usage"></a>
 ## Basic Usage Example
 ```javascript
 var parse = require("minicle");
@@ -95,7 +103,8 @@ var optionMap = {
 
 Note that, as usual, short options without arguments can be combined.
 
-## Git-style Subcommand Examples
+<a name="subcommands"></a>
+## Git-style Subcommands
 
 Things become _slightly_ more complicated when using subcommands. The first 
 argument must be either a switch or a subcommand, not a bare argument. And 
@@ -147,16 +156,20 @@ no subcommand. The `@all` options should __not__ include a `@general` entry.
 If a subcommand is used, minicle will insert it into `optionMap` as the value
 of a key named `@subcommand`.
 
-## TODO
+<a name="todo"></a>
+## Todo
 
-* Add -- GNU-style end-of-switches flag. The `max` and `@general` elements made
-  clear to me what the author of `getopts` was thinking.
+* ~~Add -- GNU-style end-of-switches flag. The `max` and `@general` elements made
+  clear to me what the author of `getopts` was thinking.~~
 * _Much_ more testing.
 * Improved docs, more examples, maybe a tutorial. Make it as easy as possible
   for people with different learning modalities to understand.
 * Update listings
 
+<a name="changelog"></a>
 ## Changelog
+
+1.0.5: Added `doubleDash` option, improved docs, tested heavily.
 
 1.0.4: Added `@subcommand` to `optionMap` results, documented same.
 
