@@ -121,6 +121,14 @@ var optionMap = {
 };
 ```
 
+The following command lines then become possible:
+
+```bash
+$ myprog add --filename foo.txt -d
+$ myprog remove -f foo.txt -F
+$ myprog --test one two three
+```
+
 The top-level keys are the subcommands, and their associated objects are the 
 same as the regular `optionMap` when not using subcommands. There are two 
 additional optional top-level entries, `@none` and `@all`, both of which are 

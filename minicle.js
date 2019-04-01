@@ -69,6 +69,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 function Minicle(optionMap, options = null) {
 
+    if(optionMap["@all"] !== undefined && optionMap["@all"]["@general"] !== undefined)
+        delete optionMap["@all"]["@general"];
+
     if(options === null || options.subcommand === undefined || options.subcommand === false) {
 
         this.optionMap  = optionMap;
