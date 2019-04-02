@@ -26,12 +26,23 @@ var tests = [
             baker:   { short: "b", vals: [ ], max: 1 },
             charlie: { short: "c", cnt: 0 },
         },
-        cli: [
-            [ "gonzo" ],
-            [ "--able", "foo", "bar", "baz", "--baker", "quux", "--charlie" ],
-            [ "--able", "foo", "bar", "baz", "--baker", "quux", "johnson", "--charlie" ],
-            [ "-a", "foo", "bar", "baz", "-b", "quux", "-c" ],
-            [ "-a", "foo", "-a", "bar", "-a", "baz", "--baker", "fnord", "-ccc" ],
+        tests: [
+            {
+                cli: [ "gonzo" ],
+                expected: "",
+            }, {
+                cli: [ "--able", "foo", "bar", "baz", "--baker", "quux", "--charlie" ],
+                expected: "",
+            }, {
+                cli: [ "--able", "foo", "bar", "baz", "--baker", "quux", "johnson", "--charlie" ],
+                expected: "",
+            }, {
+                cli: [ "-a", "foo", "bar", "baz", "-b", "quux", "-c" ],
+                expected: "",
+            }, {
+                cli: [ "-a", "foo", "-a", "bar", "-a", "baz", "--baker", "fnord", "-ccc" ],
+                expected: "",
+            }
         ]
     },
 
@@ -45,20 +56,33 @@ var tests = [
             charlie:    { short: "c", cnt: 0 },
             "@general": { vals: [ ] }
         },
-        cli: [
-            [ "gonzo" ],
-            [ "--able", "foo", "bar", "baz", "--baker", "quux", "--charlie" ],
-            [ "--able", "foo", "bar", "baz", "--baker", "quux", "johnson", "--charlie" ],
-            [ "-a", "foo", "bar", "baz", "-b", "quux", "-c" ],
-            [ "-a", "foo", "-a", "bar", "-a", "baz", "--baker", "fnord", "-ccc" ],
-            [ "-a", "foo", "-b", "bar", "--", "one", "two", "three", "four" ],
+        tests: [
+            {
+                cli: [ "gonzo" ],
+                expected: "",
+            }, {
+                cli: [ "--able", "foo", "bar", "baz", "--baker", "quux", "--charlie" ],
+                expected: "",
+            }, {
+                cli: [ "--able", "foo", "bar", "baz", "--baker", "quux", "johnson", "--charlie" ],
+                expected: "",
+            }, {
+                cli: [ "-a", "foo", "bar", "baz", "-b", "quux", "-c" ],
+                expected: "",
+            }, {
+                cli: [ "-a", "foo", "-a", "bar", "-a", "baz", "--baker", "fnord", "-ccc" ],
+                expected: "",
+            }, {
+                cli: [ "-a", "foo", "-b", "bar", "--", "one", "two", "three", "four" ],
+                expected: "",
+            }
         ]
     },
 
     {
         name: "metaMap",
         subcommand: true,
-        options: { doubleDash: true },
+        options: { subcommands: true, doubleDash: true },
         optionMap: {
             johnson: {
                 able:       { short: "a", vals: [ ] },
@@ -88,16 +112,21 @@ var tests = [
                 india:      { short: "i", cnt: 0 },
             },
         },
-        cli: [
-            [ "johnson", "-a", "fee", "fi", "fo", "fum", "-b", "kermit", "GONZO", "-h", "hoober" ],
-            [ "--delta", "foo", "bar", "-h", "one", "GONZO" ]
+        tests: [
+            {
+                cli: [ "johnson", "-a", "fee", "fi", "fo", "fum", "-b", "kermit", "GONZO", "-h", "hoober" ],
+                expected: "",
+            }, {
+                cli: [ "--delta", "foo", "bar", "-h", "one", "GONZO" ]
+                expected: "",
+            }
         ]
     },
 
     {
         name: "metaMapWithBareNone",
         subcommand: true,
-        options: { doubleDash: true },
+        options: { subcommands: true, doubleDash: true },
         optionMap: {
             johnson: {
                 able:       { short: "a", vals: [ ] },
@@ -124,16 +153,21 @@ var tests = [
                 india:      { short: "i", cnt: 0 },
             },
         },
-        cli: [
-            [ "johnson", "--golf", "tee", "-a", "fee", "fi", "fo", "fum", "-b", "kermit", "GONZO", "-h", "hoobler" ],
-            [ "--golf", "foo", "bar", "-h", "one", "GONZO" ]
+        tests: [
+            {
+                cli: [ "johnson", "--golf", "tee", "-a", "fee", "fi", "fo", "fum", "-b", "kermit", "GONZO", "-h", "hoobler" ],
+                expected: "",
+            }, {
+                cli: [ "--golf", "foo", "bar", "-h", "one", "GONZO" ]
+                expected: "",
+            }
         ]
     },
 
     {
         name: "simpleMetaMap",
         subcommand: true,
-        options: { doubleDash: true },
+        options: { subcommands: true, doubleDash: true },
         optionMap: {
             johnson: {
                 foo:        { short: "f", vals: [ ] },
@@ -150,10 +184,17 @@ var tests = [
                 "@general": { vals: [ ] }
             }
         },
-        cli: [
-            [ "johnson", "--foo", "baz", "quux", "--bar", "skorge", "twiddleyeah" ],
-            [ "nixon", "--foo", "baz", "quux", "--bar", "skorge", "twiddleyeah" ],
-            [ "--foo", "baz", "quux", "--bar", "skorge", "twiddleyeah" ],
+        tests: [
+            {
+                cli: [ "johnson", "--foo", "baz", "quux", "--bar", "skorge", "twiddleyeah" ],
+                expected: "",
+            }, {
+                cli: [ "nixon", "--foo", "baz", "quux", "--bar", "skorge", "twiddleyeah" ],
+                expected: "",
+            }, {
+                cli: [ "--foo", "baz", "quux", "--bar", "skorge", "twiddleyeah" ],
+                expected: "",
+            }
         ],
     }
 ];

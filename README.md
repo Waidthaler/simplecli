@@ -14,6 +14,7 @@ NEW in v1.0.5: Minicle now supports GNU-style `--` end-of-switches.
 
 * [Basic Usage](#basic-usage)
 * [Git-Style Subcommands](#subcommands)
+* [Options](#options)
 * [License](#license)
 * [Todo](#todo)
 * [Changelog](#changelog)
@@ -35,7 +36,7 @@ parse(optionMap);
 
 The `parse` function takes `optionMap` as its sole argument, which is an object 
 containing the command line switches and their parameters. It is altered in 
-place.
+place, so once it returns, you're done!
 
 The keys of the object represent the long form, so `infile` becomes `--infile`. 
 The associated value is an object with the switch parameters. The `short` member 
@@ -107,9 +108,11 @@ Note that, as usual, short options without arguments can be combined.
 <a name="subcommands"></a>
 ## Git-style Subcommands
 
-Things become _slightly_ more complicated when using subcommands. The first 
-argument must be either a switch or a subcommand, not a bare argument. And 
-`optionMap` becomes more deeply nested:
+Using git-style subcommands requires little more than nesting objects
+in `optionMap` with the commands as top-level keys. This optionally
+includes `@none`, which defines switches available when no command is
+provided, and `@all`, which defines switches available regardless of
+the command.
 
 ```javascript
 var optionMap = {
@@ -118,7 +121,7 @@ var optionMap = {
         "overwrite": { short: "o", cnt: 0 },
         "@general":  { vals: [ ] },
     },
-    remove: {
+    update: {
         "filename":  { short: "f", vals: [ ] },
         "force":     { short: "F", cnt: 0 },
     },
@@ -127,7 +130,7 @@ var optionMap = {
         "@general":  { vals: [ ] },
     },
     "@all": {
-        "dry-run": { short: "d", cnt: 0 }
+        "help":      { short: "h", cnt: 0 }
     }
 };
 ```
@@ -156,6 +159,17 @@ no subcommand. The `@all` options should __not__ include a `@general` entry.
 
 If a subcommand is used, minicle will insert it into `optionMap` as the value
 of a key named `@subcommand`.
+
+<a name="options">
+## Options
+
+There are currently two settings that can be passed in the optional `options`
+argument to the `parse` function:
+
+* `subcommands`: If `true`, subcommands are enabled.
+* `doubleDash`: If `true`, the appearance of `--` in the command line ends 
+   the parsing of switches and all subsequent arguments go into the appropriate
+   `@general` element.
 
 <a name="license"></a>
 ## License
@@ -189,8 +203,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 * ~~Add -- GNU-style end-of-switches flag. The `max` and `@general` elements made
   clear to me what the author of `getopts` was thinking.~~
 * _Much_ more testing.
-* Improved docs, more examples, maybe a tutorial. Make it as easy as possible
-  for people with different learning modalities to understand.
+* ~~Improved docs, more examples, maybe a tutorial. Make it as easy as possible
+  for people with different learning modalities to understand.~~
 * Update listings
 
 <a name="changelog"></a>
