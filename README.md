@@ -202,9 +202,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * ~~Add -- GNU-style end-of-switches flag. The `max` and `@general` elements made
   clear to me what the author of `getopts` was thinking.~~
-* _Much_ more testing.
 * ~~Improved docs, more examples, maybe a tutorial. Make it as easy as possible
   for people with different learning modalities to understand.~~
+* _Much_ more testing. (WIP)
+* Fix `@general` bugfest.
+* Add output example to subcommands.
 * Update listings
 
 <a name="changelog"></a>

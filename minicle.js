@@ -174,6 +174,9 @@ Minicle.prototype.resolveShort = function(c) {
 Minicle.prototype.addGeneral = function(item) {
     if(this.currentMap["@general"] !== undefined) {
         this.currentMap["@general"].vals.push(item);
+    } else if(this.currentMap["@general"] === undefined) {
+        this.currentMap["@general"] = { vals: [ ] };
+        this.currentMap["@general"].vals.push(item);
     } else if(this.none !== undefined && this.none !== null && this.none["@general"] != undefined) {
         this.none["@general"].vals.push(item);
     } else {
