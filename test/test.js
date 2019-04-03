@@ -40,7 +40,7 @@ var tests = [
             }, {
                 cli:  "--able foo bar baz --baker quux johnson --charlie",
                 expected: '{"able":{"short":"a","vals":["foo","bar","baz"]},"baker":{"short":"b","vals":["quux"],"max":1},"charlie":{"short":"c","cnt":1},"@general":{"vals":["johnson"]}}',
-                crashExpected: false,
+                crashExpected: true,
             }, {
                 cli:  "-a foo bar baz -b quux -c",
                 expected: '{"able":{"short":"a","vals":["foo","bar","baz"]},"baker":{"short":"b","vals":["quux"],"max":1},"charlie":{"short":"c","cnt":1}}',
@@ -213,7 +213,7 @@ var tests = [
             }, {
                 cli:  "nixon --foo baz quux --bar skorge twiddleyeah",
                 expected: '{"johnson":{"foo":{"short":"f","vals":[]},"bar":{"short":"b","vals":[],"max":1},"@general":{"vals":[]}},"nixon":{"foo":{"short":"f","vals":["baz","quux"]},"bar":{"short":"b","vals":["skorge"],"max":1},"@general":{vals:[]}},"@none":{"foo":{"short":"f","vals":[]},"bar":{"short":"b","vals":[],"max":1},"@general":{"vals":[]}},"@subcommand":"nixon"}',
-                crashExpected: false,
+                crashExpected: true,
             }, {
                 cli:  "--foo baz quux --bar skorge twiddleyeah",
                 expected: '{"johnson":{"foo":{"short":"f","vals":[]},"bar":{"short":"b","vals":[],"max":1},"@general":{"vals":[]}},"nixon":{"foo":{"short":"f","vals":[]},"bar":{"short":"b","vals":[],"max":1}},"@none":{"foo":{"short":"f","vals":["baz","quux"]},"bar":{"short":"b","vals":["skorge"],"max":1},"@general":{"vals":["twiddleyeah"]}}}',
