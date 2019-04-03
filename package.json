@@ -1,6 +1,6 @@
 {
   "name": "minicle",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A module for easily processing commandline arguments for most common cases.",
   "main": "minicle.js",
   "scripts": {

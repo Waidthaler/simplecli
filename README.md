@@ -139,9 +139,33 @@ var optionMap = {
 The following command lines then become possible:
 
 ```bash
-$ myprog add --filename foo.txt -d
+$ myprog add --filename foo.txt -o something
 $ myprog remove -f foo.txt -F
 $ myprog --test one two three
+```
+
+The first of these yields:
+
+```javascript
+var optionMap = {
+    add: {
+        "filename":  { short: "f", vals: [ "foo.txt" ] },
+        "overwrite": { short: "o", cnt: 1 },
+        "@general":  { vals: [ "something" ] },
+    },
+    update: {
+        "filename":  { short: "f", vals: [ ] },
+        "force":     { short: "F", cnt: 0 },
+    },
+    "@none": {
+        "test":      { short: "t", vals: [ ], max: 1 },
+        "@general":  { vals: [ ] },
+    },
+    "@all": {
+        "help":      { short: "h", cnt: 0 }
+    },
+    "@subcommand": "add"  // this is added by minicle at parse time
+};
 ```
 
 For minicle to recognize this, the `options` argument should include `subcommand: true`, e.g.
@@ -155,12 +179,19 @@ same as the regular `optionMap` when not using subcommands. There are two
 additional optional top-level entries, `@none` and `@all`, both of which are 
 optional. The `@none` object specifies switches that can be used when no 
 subcommand is given, and `@all` specifies switches that can be used with any or 
-no subcommand. The `@all` options should __not__ include a `@general` entry.
+no subcommand. 
+
+To avoid a lot of head-scratching confusion, it is important to understand how 
+the `@general` catchall works with subcommands. The `@all` options should 
+__not__ include a `@general` entry, and Minicle will remove it for you should 
+you forget. Each command that accepts general arguments must have its own 
+`@general`, without which general arguments will throw an error. Note that this
+includes the `@none` subcommand.
 
 If a subcommand is used, minicle will insert it into `optionMap` as the value
 of a key named `@subcommand`.
 
-<a name="options">
+<a name="options"></a>
 ## Options
 
 There are currently two settings that can be passed in the optional `options`
@@ -200,19 +231,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <a name="todo"></a>
 ## Todo
 
-* ~~Add -- GNU-style end-of-switches flag. The `max` and `@general` elements made
-  clear to me what the author of `getopts` was thinking.~~
-* ~~Improved docs, more examples, maybe a tutorial. Make it as easy as possible
-  for people with different learning modalities to understand.~~
-* _Much_ more testing. (WIP)
-* Fix `@general` bugfest.
-* Add output example to subcommands.
-* Update listings
+* Solicit suggestions from users.
 
 <a name="changelog"></a>
 ## Changelog
 
-1.0.5: Added `doubleDash` option, improved docs, tested heavily.
+1.0.5: Added `doubleDash` option, improved docs, tested heavily, fixed a bunch of edge cases.
 
 1.0.4: Added `@subcommand` to `optionMap` results, documented same.
 
