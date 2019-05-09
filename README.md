@@ -1,4 +1,4 @@
-# minicle v1.0.5
+# minicle v1.0.6
 
 Minicle is Node module for easily processing command line switches and arguments.
 
@@ -8,7 +8,9 @@ need something quick and simple. All it does is parse CLI options. It doesn't
 handle exotic edge cases, generate usage information, validate arguments, or 
 anything else.
 
-NEW in v1.0.5: Minicle now supports GNU-style `--` end-of-switches.
+NEW in v1.0.6: Nothing, actually. I just updated the documentation to note
+that an optional add-on, [minicle-usage](https://www.npmjs.com/package/minicle-usage), 
+is now available to provide runtime headers and usage information.
 
 ## Table of Contents
 
@@ -235,6 +237,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <a name="changelog"></a>
 ## Changelog
+
+1.0.6: Updated the docs to announce minicle-usage.
 
 1.0.5: Added `doubleDash` option, improved docs, tested heavily, fixed a bunch of edge cases.
 
