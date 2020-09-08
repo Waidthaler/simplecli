@@ -40,7 +40,7 @@ arguments, or anything else.
 
 The constructor takes `optionMap` and an optional options object. The
 `optionMap` object contains the command line switches and their parameters. It
-is altered in place, so once it returns, you're done!
+is altered in place, so once it returns, you're done.
 
 The keys of the object represent the long form, so `infile` becomes `--infile`.
 The associated value is an object with the switch parameters. The `short` member
@@ -225,13 +225,13 @@ It takes two arguments:
 
 The `options` argument may contain the following attributes:
 
-* **`customColors`:** An object containing custom ANSI color callbacks. [See below.](#custom-colors-usage)
-* **`exit`:** If true, exit the program after output. Defaults to `true`.
-* **`lineChar`:** Separator between commands, defaults to `"-"`
-* **`subcommands`:** Defaults `false`, must be `true` if minicle is using git-style subcommands.
-* **`usageText`:** Whatever text should follow `Usage:`. Not strictly required, but defaults to `"YOU FORGOT TO SPECIFY options.usageText!"`.
-* **`useColors`:** Whether to use ANSI colors. Defaults to `true`.
-* **`width`:** Maximum width of output, defaults to 76. Note that this is advisory: content does not wrap.
+* `customColors`: An object containing custom ANSI color callbacks. [See below.](#custom-colors-usage)
+* `exit`: If true, exit the program after output. Defaults to `true`.
+* `lineChar`: Separator between commands, defaults to `"-"`
+* `subcommands`: Defaults `false`, must be `true` if minicle is using git-style subcommands.
+* `usageText`: Whatever text should follow `Usage:`. Not strictly required, but defaults to `"YOU FORGOT TO SPECIFY options.usageText!"`.
+* `useColors`: Whether to use ANSI colors. Defaults to `true`.
+* `width`: Maximum width of output, defaults to 76. Note that this is advisory: content does not wrap.
 
 <a name="custom-colors-usage"></a>
 ### Custom Colors
@@ -328,11 +328,11 @@ The `header` function just emits a simple header centered in a box:
 The `content` argument is the text in the box. The `options` argument may contain
 the following attributes:
 
-* **`customColors`:** An object containing custom ANSI color callbacks. [See below.](#custom-colors-header)
-* **`lineChar`:** By default, this is a single character, `"="` to use for drawing the box. If eight characters are supplied, they are used for the eight directions, starting from the upper left and proceeding clockwise. Alternatively, `"ascii"`, `"pcdos1"`, and `"pcdos2"` are shortcuts for a few common variations.
-* **`useColors`:** A boolean indicating whether to use ANSI colors. Defaults to `true`.
-* **`width`:** The width of the header in characters. Defaults to 76.
-* **`output`:** A callback function to receive the result. Defaults to `console.log`. If set to `null`, the string is simply returned.
+* `customColors`: An object containing custom ANSI color callbacks. [See below.](#custom-colors-header)
+* `lineChar`: By default, this is a single character, `"="` to use for drawing the box. If eight characters are supplied, they are used for the eight directions, starting from the upper left and proceeding clockwise. Alternatively, `"ascii"`, `"pcdos1"`, and `"pcdos2"` are shortcuts for a few common variations.
+* `useColors`: A boolean indicating whether to use ANSI colors. Defaults to `true`.
+* `width`: The width of the header in characters. Defaults to 76.
+* `output`: A callback function to receive the result. Defaults to `console.log`. If set to `null`, the string is simply returned.
 
 ### Custom Colors <a name="custom-colors-header"></a>
 
