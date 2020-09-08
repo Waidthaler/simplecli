@@ -26,16 +26,16 @@ arguments, or anything else.
 ## Basic Usage Example <a name="basic-usage"></a>
 
 ```javascript
-var Minicle = require("minicle");
+    var Minicle = require("minicle");
 
-var optionMap = {
-    infile:     { short: "i", vals: [ ] },
-    outfile:    { short: "s", vals: [ ], max: 1 },
-    verbose:    { short: "v", cnt: 0 },
-    "@general": { vals: [ ] }
-};
+    var optionMap = {
+        infile:     { short: "i", vals: [ ] },
+        outfile:    { short: "s", vals: [ ], max: 1 },
+        verbose:    { short: "v", cnt: 0 },
+        "@general": { vals: [ ] }
+    };
 
-var m = new Minicle(optionMap);
+    var m = new Minicle(optionMap);
 ```
 
 The constructor takes `optionMap` and an optional options object. The
@@ -56,55 +56,61 @@ exists, one will be created.
 
 The following command lines are equivalent:
 
+```bash
+    $ myprog -i foo -i bar
+    $ myprog --infile foo --infile bar
+    $ myprog --infile foo bar
+```
+
 ```javascript
-myprog -i foo -i bar
-myprog --infile foo --infile bar
-myprog --infile foo bar
+    // will yield:
 
-// will yield:
-
-var optionMap = {
-    infile:     { short: "i", vals: [ "foo", "bar" ] },
-    outfile:    { short: "s", vals: [ ], max: 1 },
-    verbose:    { short: "v", cnt: 0 },
-    "@general": { vals: [ ] }
-};
+    var optionMap = {
+        infile:     { short: "i", vals: [ "foo", "bar" ] },
+        outfile:    { short: "s", vals: [ ], max: 1 },
+        verbose:    { short: "v", cnt: 0 },
+        "@general": { vals: [ ] }
+    };
 ```
 
 But if you try passing multiple arguments to `--outfile`, which has `max: 1`,
 all arguments after the first will end up in `@general`:
 
+```bash
+    $ myprog -o foo -o bar
+    $ myprog -o foo bar
+```
+
 ```javascript
-myprog -o foo -o bar
-myprog -o foo bar
+    // will yield:
 
-// will yield:
-
-var optionMap = {
-    infile:     { short: "i", vals: [ ] },
-    outfile:    { short: "s", vals: [ "foo" ], max: 1 },
-    verbose:    { short: "v", cnt: 0 },
-    "@general": { vals: [ "bar" ] }
-};
+    var optionMap = {
+        infile:     { short: "i", vals: [ ] },
+        outfile:    { short: "s", vals: [ "foo" ], max: 1 },
+        verbose:    { short: "v", cnt: 0 },
+        "@general": { vals: [ "bar" ] }
+    };
 ```
 
 Switches with a `cnt: 0` member instead of `vals` do not take arguments; they
 simply accumulate a count of how many times they have been used. The classical
 case is a verbosity switch, e.g.:
 
+```bash
+    $ myprog -v -v -v
+    $ myprog --verbose --verbose --verbose
+    $ myprog -vvv
+```
+
 ```javascript
-myprog -v -v -v
-myprog --verbose --verbose --verbose
-myprog -vvv
+    // will yield:
 
-// will yield:
-
-var optionMap = {
-    infile:     { short: "i", vals: [ ] },
-    outfile:    { short: "s", vals: [ ], max: 1 },
-    verbose:    { short: "v", cnt: 3 },
-    "@general": { vals: [ ] }
-};
+    var optionMap = {
+        infile:     { short: "i", vals: [ ] },
+        outfile:    { short: "s", vals: [ ], max: 1 },
+        verbose:    { short: "v", cnt: 3 },
+        "@general": { vals: [ ] }
+    };
 ```
 
 Note that, as usual, short options without arguments can be combined.
@@ -119,63 +125,63 @@ provided, and `@all`, which defines switches available regardless of
 the command.
 
 ```javascript
-var optionMap = {
-    add: {
-        "filename":  { short: "f", vals: [ ] },
-        "overwrite": { short: "o", cnt: 0 },
-        "@general":  { vals: [ ] },
-    },
-    update: {
-        "filename":  { short: "f", vals: [ ] },
-        "force":     { short: "F", cnt: 0 },
-    },
-    "@none": {
-        "test":      { short: "t", vals: [ ], max: 1 },
-        "@general":  { vals: [ ] },
-    },
-    "@all": {
-        "help":      { short: "h", cnt: 0 }
-    }
-};
+    var optionMap = {
+        add: {
+            "filename":  { short: "f", vals: [ ] },
+            "overwrite": { short: "o", cnt: 0 },
+            "@general":  { vals: [ ] },
+        },
+        update: {
+            "filename":  { short: "f", vals: [ ] },
+            "force":     { short: "F", cnt: 0 },
+        },
+        "@none": {
+            "test":      { short: "t", vals: [ ], max: 1 },
+            "@general":  { vals: [ ] },
+        },
+        "@all": {
+            "help":      { short: "h", cnt: 0 }
+        }
+    };
 ```
 
 
 The following command lines then become possible:
 
 ```bash
-$ myprog add --filename foo.txt -o something
-$ myprog remove -f foo.txt -F
-$ myprog --test one two three
+    $ myprog add --filename foo.txt -o something
+    $ myprog remove -f foo.txt -F
+    $ myprog --test one two three
 ```
 
 The first of these yields:
 
 ```javascript
-var optionMap = {
-    add: {
-        "filename":  { short: "f", vals: [ "foo.txt" ] },
-        "overwrite": { short: "o", cnt: 1 },
-        "@general":  { vals: [ "something" ] },
-    },
-    update: {
-        "filename":  { short: "f", vals: [ ] },
-        "force":     { short: "F", cnt: 0 },
-    },
-    "@none": {
-        "test":      { short: "t", vals: [ ], max: 1 },
-        "@general":  { vals: [ ] },
-    },
-    "@all": {
-        "help":      { short: "h", cnt: 0 }
-    },
-    "@subcommand": "add"  // this is added by minicle at parse time
-};
+    var optionMap = {
+        add: {
+            "filename":  { short: "f", vals: [ "foo.txt" ] },
+            "overwrite": { short: "o", cnt: 1 },
+            "@general":  { vals: [ "something" ] },
+        },
+        update: {
+            "filename":  { short: "f", vals: [ ] },
+            "force":     { short: "F", cnt: 0 },
+        },
+        "@none": {
+            "test":      { short: "t", vals: [ ], max: 1 },
+            "@general":  { vals: [ ] },
+        },
+        "@all": {
+            "help":      { short: "h", cnt: 0 }
+        },
+        "@subcommand": "add"  // this is added by minicle at parse time
+    };
 ```
 
 For minicle to recognize this, the `options` argument should include `subcommand: true`, e.g.
 
 ```javascript
-var m = new Minicle(optionMap, { subcommand: true });
+    var m = new Minicle(optionMap, { subcommand: true });
 ```
 
 The top-level keys are the subcommands, and their associated objects are the
@@ -214,7 +220,7 @@ minicle `optionMap`, with added `args` and `desc` attributes (both optional).
 It takes two arguments:
 
 ```javascript
-usage(optionMap, options)
+    usage(optionMap, options)
 ```
 
 The `options` argument may contain the following attributes:
@@ -240,13 +246,13 @@ If you're using `ansi-colors`, assigned to `ac`, this is what the
 the defaults:
 
 ```javascript
-customColors: {
-    usage:    ac.white.bold,
-    switches: ac.yellow.bold,
-    args:     ac.blue.bold,
-    desc:     ac.cyan.bold,
-    cmd:      ac.green.bold,
-}
+    customColors: {
+        usage:    ac.white.bold,
+        switches: ac.yellow.bold,
+        args:     ac.blue.bold,
+        desc:     ac.cyan.bold,
+        cmd:      ac.green.bold,
+    }
 ```
 
 ## usage() Example<a name="usage-example"></a>
@@ -254,28 +260,28 @@ customColors: {
 Starting with the basic data structure we've already seen...
 
 ```javascript
-var optionMap = {
-    infile:     { short: "i", vals: [ ] },
-    outfile:    { short: "s", vals: [ ], max: 1 },
-    verbose:    { short: "v", cnt: 0 },
-    "@general": { vals: [ ] }
-};
+    var optionMap = {
+        infile:     { short: "i", vals: [ ] },
+        outfile:    { short: "s", vals: [ ], max: 1 },
+        verbose:    { short: "v", cnt: 0 },
+        "@general": { vals: [ ] }
+    };
 ```
 
 ...all you have to do is add `args` and `desc` attributes for the switch arguments
 and descriptions, respectively:
 
 ```javascript
-var mu = require("minicle-usage");
+    var mu = require("minicle-usage");
 
-var optionMap = {
-    infile:     { short: "i", vals: [ ], args: "<filename>", desc: "Input file." },
-    outfile:    { short: "s", vals: [ ], max: 1, args: "<filename>", desc: "Output file." },
-    verbose:    { short: "v", cnt: 0, desc: "Increase verbosity level." },
-    "@general": { vals: [ ] }
-};
+    var optionMap = {
+        infile:     { short: "i", vals: [ ], args: "<filename>", desc: "Input file." },
+        outfile:    { short: "s", vals: [ ], max: 1, args: "<filename>", desc: "Output file." },
+        verbose:    { short: "v", cnt: 0, desc: "Increase verbosity level." },
+        "@general": { vals: [ ] }
+    };
 
-mu.usage(optionMap, { usageText: "someprog <cmd> [options]" });
+    mu.usage(optionMap, { usageText: "someprog <cmd> [options]" });
 ```
 
 This will yield something like:
@@ -300,15 +306,15 @@ and the oh-so-trivial `header`, which just takes a string, centers it, and wraps
 in a box:
 
 ```javascript
-mu.header("Default! Version 1.0!");
+    mu.header("Default! Version 1.0!");
 ```
 
 which outputs
 
 ```
-============================================================================
-=                            Default! Version 1.0!                         =
-============================================================================
+    ============================================================================
+    =                            Default! Version 1.0!                         =
+    ============================================================================
 ```
 
 ## header()<a name="header"></a>
@@ -316,7 +322,7 @@ which outputs
 The `header` function just emits a simple header centered in a box:
 
 ```javascript
-header(content, options)
+    header(content, options)
 ```
 
 The `content` argument is the text in the box. The `options` argument may contain
