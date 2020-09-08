@@ -370,8 +370,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ## Todo
 
 * Code
-    * Implement error() function.
-    * Either replace exceptions or document and instrument them better.
+    * Unify options.
+    * Fix tests.
 * Documentation
     * Include examples in color.
     * More examples
@@ -381,7 +381,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ## Changelog
 
 2.0.0:
-
+* Removed exceptions triggered by end-user error and instead return error objects.
 * Merged `minicle-usage` into the main Minicle module.
 * Replaced '@' in map receptacle entries with '$' so they can be used without brackets in the code.
 * Filled in missing documentation on the `customColors` option to the `headers` method.

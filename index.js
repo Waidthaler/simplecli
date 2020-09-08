@@ -23,57 +23,67 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 const ac = require("ansi-colors");
 
-function Minicle(optionMap, options = null) {
 
+function Minicle(options) {
+    this.optionMap   = options.optionMap   ? options.optionMap   : null;
+    this.errorLevels = options.errorLevels ? options.errorLevels :
+        [
+            { name: "fatal", levelFg: ac.yellow.bold, levelBg: ac.bgRed,          messageFg: ac.red.bold,    messageBg: (x) => x, locationFg: ac.white.bold, locationBg: (x) => x },
+            { name: "warn",  levelFg: ac.red.bold,    levelBg: ac.bgYellowBright, messageFg: ac.yellow.bold, messageBg: (x) => x, locationFg: ac.white.bold, locationBg: (x) => x },
+            { name: "info",  levelFg: ac.white.bold,  levelBg: ac.bgGreen,        messageFg: ac.green.bold,  messageBg: (x) => x, locationFg: ac.white.bold, locationBg: (x) => x },
+            { name: "debug", levelFg: ac.white,       levelBg: ac.bgBlackBright,  messageFg: ac.white,       messageBg: (x) => x, locationFg: ac.white,      locationBg: (x) => x },
+        ];
+    this.verbosity   = options.verbosity != undefined ? options.verbosity : 2;
+    this.output      = options.output    != undefined ? options.output    : console.log;
+}
+
+
+Minicle.prototype.getargs = function(options) {
+
+    this.optionMap = options.optionMap ? options.optionMap : this.optionMap;
+    var optionMap = this.optionMap;
 
     if(optionMap["$all"] !== undefined && optionMap["$all"]["$general"] !== undefined)
         delete optionMap["$all"]["$general"];
 
-    if(options !== null)
-        this.doubleDash = options.doubleDash ? true : false;
+    this.doubleDash  = options.doubleDash ? true : false;
+    this.main        = optionMap;
+    this.none        = null;
+    this.all         = null;
+    this.subcommands = false;
+    this.subname     = null;
+    this.startArg    = 2;
 
-    if(options === null || options.subcommands === undefined || options.subcommands === false) {
+    this.all = optionMap["$all"]  === undefined ? null : optionMap["$all"];
 
-        this.optionMap   = optionMap;
-        this.main        = optionMap;
-        this.none        = null;
-        this.all         = null;
-        this.subcommands = false;
-        this.subname     = null;
+    if(process.argv[2] === undefined) {
+
+        return;
+
+    } else if(process.argv[2].substr(0, 1) == "-") {
+
         this.startArg    = 2;
+        this.main        = optionMap["$none"];
+        this.none        = this.main;
+        this.subcommands = this.main;
+        this.subname     = "$none";
+
+    } else if(optionMap[process.argv[2]] !== undefined) {
+
+        this.startArg    = 3;
+        this.main        = optionMap[process.argv[2]];
+        this.none        = optionMap["$none"] === undefined ? null : optionMap["$none"];
+        this.subcommands = this.main;
+        this.subname     = optionMap["$subcommand"] = process.argv[2];
 
     } else {
-
-        this.all = optionMap["$all"]  === undefined ? null : optionMap["$all"];
-
-        if(process.argv[2] === undefined) {
-
-            return;
-
-        } else if(process.argv[2].substr(0, 1) == "-") {
-
-            this.startArg    = 2;
-            this.main        = optionMap["$none"];
-            this.none        = this.main;
-            this.subcommands = this.main;
-            this.subname     = "$none";
-
-        } else if(optionMap[process.argv[2]] !== undefined) {
-
-            this.startArg    = 3;
-            this.main        = optionMap[process.argv[2]];
-            this.none        = optionMap["$none"] === undefined ? null : optionMap["$none"];
-            this.subcommands = this.main;
-            this.subname     = optionMap["$subcommand"] = process.argv[2];
-
-        } else {
-            throw new Error("FATAL ERROR: Unknown subcommand '" + process.argv[2] + "'.");
-        }
-
+        return { errcode: "UNSUB", errmsg: "Unknown subcommand '" + process.argv[2] + "'." };
     }
 
+
     this.currentMap = this.main;
-    this.subParse();
+
+    return this.subParse();
 
 }
 
@@ -86,7 +96,7 @@ function Minicle(optionMap, options = null) {
 Minicle.prototype.resolveLong = function(s) {
 
     if(this.main === undefined)
-        throw new Error("FATAL ERROR: Missing subcommand.");
+        return { errcode: "NOSUB", errmsg: "Missing subcommand." };
 
     if(this.main !== null && this.main[s] !== undefined) {
         this.currentMap = this.main;
@@ -98,7 +108,7 @@ Minicle.prototype.resolveLong = function(s) {
         this.currentMap = this.none;
         return this.none[s];
     }
-    throw new Error("FATAL ERROR: Unknown commandline switch '--" + s + "'");
+    return { errcode: "UNSWITCH", errmsg: "Unknown commandline switch '--" + s + "'" };
 }
 
 
@@ -135,8 +145,9 @@ Minicle.prototype.addGeneral = function(item) {
     } else if(this.currentArg === undefined && this.main["$general"] !== undefined) {
         this.none["$general"].vals.push(item);
     } else {
-        throw new Error("FATAL ERROR: Argument '" + item + "' was not preceded by an option switch.");
+        return { errcode: "NOSWITCH", errmsg: "Argument '" + item + "' was not preceded by an option switch." };
     }
+    return false;
 }
 
 
@@ -159,9 +170,12 @@ Minicle.prototype.subParse = function() {
 
         if(process.argv[a] == "--" && this.doubleDash) {
             a++;
-            while(a < process.argv.length)
-                this.addGeneral(process.argv[a++]);
-            return;
+            while(a < process.argv.length) {
+                var err = this.addGeneral(process.argv[a++]);
+                if(err)
+                    return err;
+            }
+            return false;
         }
 
         if(dashes == 1) {
@@ -178,7 +192,7 @@ Minicle.prototype.subParse = function() {
                 var complex = this.resolveShort(item);
 
                 if(complex === null) {
-                    throw new Error("FATAL ERROR: Unknown commandline switch '-" + arg + "'");
+                    return { errcode: "UNSWITCH", errmsg: "Unknown commandline switch '-" + arg + "'" };
                 } else {
                     arg = complex;
                     dashes = 2;
@@ -190,6 +204,8 @@ Minicle.prototype.subParse = function() {
 
         if(dashes == 2) {
             var entry = this.resolveLong(arg);
+            if(entry.errcode)
+                return entry;
             if(entry.cnt !== undefined) {
                 currentArg = null;
                 entry.cnt++;
@@ -203,25 +219,29 @@ Minicle.prototype.subParse = function() {
 
         if(currentArg === null) {
 
-            this.addGeneral(item);
+            var res = this.addGeneral(item);
+            if(res.errcode)
+                return res;
 
         } else if(entry.vals === undefined) {
 
-            throw new Error("FATAL ERROR: Commandline switch --" + currentArg + "/-" + entry.short + " does not take arguments.");
+            return { errcode: "SFARGS", errmsg: "Commandline switch --" + currentArg + "/-" + entry.short + " does not take arguments." };
 
         } else if(entry.max !== undefined) {
 
             if(entry.vals.length < entry.max) {
                 this.currentMap[currentArg].vals.push(item);
             } else {
-                this.addGeneral(item);
+                var res = this.addGeneral(item);
+                if(res.errcode)
+                    return res;
             }
 
 
         } else {
 
             if(this.currentMap[currentArg] === undefined)
-                throw new Error("FATAL ERROR: Argument '" + item + "' is not preceded by an option switch.");
+                return { errcode: "NOSWITCH", errmsg: "Argument '" + item + "' is not preceded by an option switch." };
 
             this.currentMap[currentArg].vals.push(item);
 
@@ -229,6 +249,7 @@ Minicle.prototype.subParse = function() {
 
     }
 
+    return false;
 }
 
 
@@ -288,7 +309,7 @@ Minicle.prototype.header = function(content, options) {
         options.customColors.title = ac.yellow.bold;
 
     if(options.output === undefined)
-        options.output = console.log;
+        options.output = this.output;
 
     var pad = ((options.width - 2) / 2) - (content.length / 2);
 
@@ -463,6 +484,41 @@ Minicle.prototype.getWidths = function(map, max) {
     }
 }
 
+
+
+//------------------------------------------------------------------------------
+// Outputs a colorized error message.
+//------------------------------------------------------------------------------
+
+Minicle.prototype.errmsg = function(level, message, location = null, options = { }) {
+
+    var verbosity   = options.verbosity   !== undefined ? options.verbosity   : this.verbosity;
+    var errorLevels = options.errorLevels !== undefined ? options.errorLevels : this.errorLevels;
+    var output      = options.output      !== undefined ? options.output      : this.output;
+
+    for(var i = 0; i < errorLevels.length; i++) {
+        if(i > verbosity)
+            return;
+        if(errorLevels[i].name == level) {
+            var name = errorLevels[i].name.toUpperCase();
+            var levelBg = errorLevels[i].levelBg(" ").length > 1;
+            var result = errorLevels[i].levelFg(errorLevels[i].levelBg((levelBg ? " " : "" ) + name + (levelBg ? " " : "" )))
+                + errorLevels[i].messageFg(errorLevels[i].messageBg(" " + message
+                + (location ? " " : "")))
+                + (location ? errorLevels[i].locationFg(errorLevels[i].locationBg("(" + location + ")")) : "");
+            if(output === null)
+                return result;
+            else
+                this.output(result);
+            return;
+        }
+
+    }
+
+    throw new RangeError("Minicle.errmsg level " + level + " does not exist in defined styles.");
+
+
+}
 
 
 

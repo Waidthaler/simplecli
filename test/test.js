@@ -572,14 +572,153 @@ for(var t = 0; t < tests.length; t++) {
     total++;
 }
 
-//const fs = require("fs");
-//fs.writeFileSync("out", JSON.stringify(tests));
+
+// errmsg() tests ==============================================================
+
+var tests = [
+    {
+        name: "Testing FATAL error w/location",
+        level: "fatal",
+        verbosity: 3,
+        message: "This is a fatal error message with a location!",
+        location: "test.js",
+        expected: "\u001b[33m\u001b[1m\u001b[41m FATAL \u001b[49m\u001b[22m\u001b[39m\u001b[31m\u001b[1m This is a fatal error message with a location! \u001b[22m\u001b[39m\u001b[37m\u001b[1m(test.js)\u001b[22m\u001b[39m"
+    },
+    {
+        name: "Testing FATAL error w/o location",
+        level: "fatal",
+        verbosity: 3,
+        message: "This is a fatal error message without a location!",
+        expected: "\u001b[33m\u001b[1m\u001b[41m FATAL \u001b[49m\u001b[22m\u001b[39m\u001b[31m\u001b[1m This is a fatal error message without a location!\u001b[22m\u001b[39m"
+    },
+    {
+        name: "Testing FATAL error w/location (suppressed)",
+        level: "fatal",
+        verbosity: -1,
+        message: "This is a fatal error message with a location! But you shouldn't see it.",
+        location: "test.js"
+    },
+    {
+        name: "Testing FATAL error w/o location (suppressed)",
+        level: "fatal",
+        verbosity: -1,
+        message: "This is a fatal error message without a location! But you shouldn't see it."
+    },
+    {
+        name: "Testing WARN error w/location",
+        level: "warn",
+        verbosity: 3,
+        message: "This is a warn error message with a location!",
+        location: "test.js",
+        expected: "\u001b[31m\u001b[1m\u001b[103m WARN \u001b[49m\u001b[22m\u001b[39m\u001b[33m\u001b[1m This is a warn error message with a location! \u001b[22m\u001b[39m\u001b[37m\u001b[1m(test.js)\u001b[22m\u001b[39m"
+    },
+    {
+        name: "Testing WARN error w/o location",
+        level: "warn",
+        verbosity: 3,
+        message: "This is a warn error message without a location!",
+        expected: "\u001b[31m\u001b[1m\u001b[103m WARN \u001b[49m\u001b[22m\u001b[39m\u001b[33m\u001b[1m This is a warn error message without a location!\u001b[22m\u001b[39m"
+    },
+    {
+        name: "Testing WARN error w/location (suppressed)",
+        level: "warn",
+        verbosity: -1,
+        message: "This is a warn error message with a location! But you shouldn't see it.",
+        location: "test.js"
+    },
+    {
+        name: "Testing WARN error w/o location (suppressed)",
+        level: "warn",
+        verbosity: -1,
+        message: "This is a warn error message without a location! But you shouldn't see it."
+    },
+    {
+        name: "Testing INFO error w/location",
+        level: "info",
+        verbosity: 3,
+        message: "This is a info error message with a location!",
+        location: "test.js",
+        expected: "\u001b[37m\u001b[1m\u001b[42m INFO \u001b[49m\u001b[22m\u001b[39m\u001b[32m\u001b[1m This is a info error message with a location! \u001b[22m\u001b[39m\u001b[37m\u001b[1m(test.js)\u001b[22m\u001b[39m"
+    },
+    {
+        name: "Testing INFO error w/o location",
+        level: "info",
+        verbosity: 3,
+        message: "This is a info error message without a location!",
+        expected: "\u001b[37m\u001b[1m\u001b[42m INFO \u001b[49m\u001b[22m\u001b[39m\u001b[32m\u001b[1m This is a info error message without a location!\u001b[22m\u001b[39m"
+    },
+    {
+        name: "Testing INFO error w/location (suppressed)",
+        level: "info",
+        verbosity: -1,
+        message: "This is a info error message with a location! But you shouldn't see it.",
+        location: "test.js"
+    },
+    {
+        name: "Testing INFO error w/o location (suppressed)",
+        level: "info",
+        verbosity: -1,
+        message: "This is a info error message without a location! But you shouldn't see it."
+    },
+    {
+        name: "Testing DEBUG error w/location",
+        level: "debug",
+        verbosity: 3,
+        message: "This is a debug error message with a location!",
+        location: "test.js",
+        expected: "\u001b[37m\u001b[100m DEBUG \u001b[49m\u001b[39m\u001b[37m This is a debug error message with a location! \u001b[39m\u001b[37m(test.js)\u001b[39m"
+    },
+    {
+        name: "Testing DEBUG error w/o location",
+        level: "debug",
+        verbosity: 3,
+        message: "This is a debug error message without a location!",
+        expected: "\u001b[37m\u001b[100m DEBUG \u001b[49m\u001b[39m\u001b[37m This is a debug error message without a location!\u001b[39m"
+    },
+    {
+        name: "Testing DEBUG error w/location (suppressed)",
+        level: "debug",
+        verbosity: -1,
+        message: "This is a debug error message with a location! But you shouldn't see it.",
+        location: "test.js"
+    },
+    {
+        name: "Testing DEBUG error w/o location (suppressed)",
+        level: "debug",
+        verbosity: -1,
+        message: "This is a debug error message without a location! But you shouldn't see it."
+    }
+];
+
+process.argv.length = 2;
+var m = new Minicle({ output: console.log });
+
+for(var t = 0; t < tests.length; t++) {
+    console.log("\n" + ac.bold.bgBlue(header(t + ". Testing " + tests[t].name, 2)) + "\n");
+    var res = m.errmsg(tests[t].level, tests[t].message, tests[t].location, { verbosity: tests[t].verbosity, output: null });
+    console.log(res ? res : "");
+
+    if(res == tests[t].expected) {
+        console.log(ac.cyan("\nResult:   ") + ac.bgGreen.bold.white(" OKAY "));
+        okay++;
+    } else {
+        console.log(ac.cyan("\nResult:   ") + ac.bgRed.bold.yellow(" FAIL "));
+        fail++;
+    }
+    total++;
+
+    tests[t].expected = res;
+}
+
+
+
+const fs = require("fs");
+fs.writeFileSync("out", JSON.stringify(tests));
 
 console.log("\n");
 console.log(ac.green.bold(header("RESULTS:", 1) + "\n"));
 console.log(ac.bgGreen.white.bold(" OKAY:  ") + " " + ac.green.bold(okay));
 console.log(ac.bgRed.yellow.bold(" FAIL:  ")       + " " +  ac.yellow.bold(fail));
-//console.log(ac.bgRed.yellow.bold(" CRASH: ")  + " " +  ac.red.bold(crashes));
 console.log(ac.bgWhite.black(" TOTAL: ") + " " +  ac.white.bold(total));
 
 
