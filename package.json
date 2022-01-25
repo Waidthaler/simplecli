@@ -2,7 +2,7 @@
   "name": "minicle",
   "version": "2.0.0",
   "description": "A module for easily processing commandline arguments and usage information.",
-  "main": "index.js",
+  "main": "minicle.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,7 +13,7 @@
   "author": "Erich Waidthaler",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "ansi-colors": "^3.2.4"
+    "ansi-colors": "^4.1.1"
   },
   "bugs": {
     "url": "https://github.com/Waidthaler/minicle/issues"
