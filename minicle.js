@@ -27,9 +27,9 @@ const ac = require("ansi-colors");
 
 const ansiRe = new RegExp("(@[0-9A-FXx][0-9A-FXx]@)", "gi");
 const styles = {
-    //         0    1    2    3    4    5    6    7
-    //        TL   TC   TR    R   BR   BC   BL    L
-    basic:  [ "=", "=", "=", "=", "=", "=", "=", "=" ],
+    //         0    1    2    3    4    5    6    7        0 1 2     TL TC TR
+    //        TL   TC   TR    R   BR   BC   BL    L        7   3     ML    MR
+    basic:  [ "=", "=", "=", "=", "=", "=", "=", "=" ], // 6 5 4     BL BC BR
     ascii:  [ "+", "-", "+", "|", "+", "-", "+", "|" ],
     pcdos1: [ "┌", "─", "┐", "│", "┘", "─", "└", "│" ],
     pcdos2: [ "╔", "═", "╗", "║", "╝", "═", "╚", "║" ],
@@ -313,9 +313,9 @@ module.exports.errmsg = function errmsg(level, message, location = null, options
 //##############################################################################
 
 function paragraphize(text, opts = { }) {
-    var width  = opts.width       ? opts.width       : 76;
-    var indent = opts.indent      ? opts.indent      : 0;
-    var align  = opts.align       ? opts.align       : "left";
+    var width  = opts.width  ? opts.width       : 76;
+    var indent = opts.indent ? opts.indent      : 0;
+    var align  = opts.align  ? opts.align       : "left";
 
     if(opts.ignoreAnsiMarkup ? opts.ignoreAnsiMarkup : false)
         var length = plainLength;
@@ -422,7 +422,7 @@ module.exports.paragraphize = paragraphize;
 
 // TODO: check for repeated calculations
 
-module.exports.textBox = function textBox(text, style, opts = { }) {
+function textBox(text, style, opts = { }) {
     var width   = opts.width   ? opts.width   : 76;
     var reflow  = opts.reflow  ? opts.reflow  : false;
     var noRight = opts.noRight ? opts.noRight : false;
@@ -504,6 +504,31 @@ module.exports.textBox = function textBox(text, style, opts = { }) {
     result.push(textLine(width, [style[6], style[5], style[4]], opts.ignoreAnsiMarkup));
 
     return result;
+}
+
+module.exports.textBox = textBox;
+
+//##############################################################################
+//# Outputs a simple one-line header box.
+//##############################################################################
+
+module.exports.outputHeader = function outputHeader(text = "", style = "pcdos2", boxColor = null, width = 76) {
+    var textWidth = width - 4;
+    text = ansiSubstr(text.split("\n").shift().trim(), 0, textWidth);
+    text = paragraphize(text, {
+        width: textWidth, align: "center", ignoreAnsiMarkup: true
+    }).join("\n");
+
+    style = styles[style].slice(0);
+    style[0] = boxColor + style[0];
+    style[2] = style[2] + "@07@";
+    style[7] = boxColor + style[7] + "@07@";
+    style[3] = boxColor + style[7] + "@07@";
+    style[6] = boxColor + style[6];
+    style[4] = boxColor + style[4] + "@07@";
+
+    text = textBox(text, style, { width: width, ignoreAnsiMarkup: true });
+    console.log(ansiMarkup(text.join("\n")));
 }
 
 

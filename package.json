@@ -1,6 +1,6 @@
 {
   "name": "minicle",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A module for easily processing commandline arguments and usage information.",
   "main": "minicle.js",
   "scripts": {
@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Waidthaler/minicle.git"
+    "url": "https://github.com/eodell6502/minicle.git"
   },
-  "author": "Erich Waidthaler",
+  "author": "Eric O'Dell",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "ansi-colors": "^4.1.1"
+    "ansi-colors": "^4.1.3"
   },
   "bugs": {
-    "url": "https://github.com/Waidthaler/minicle/issues"
+    "url": "https://github.com/eodell6502/minicle/issues"
   },
-  "homepage": "https://github.com/Waidthaler/minicle#readme"
+  "homepage": "https://github.com/eodell6502/minicle#readme"
 }

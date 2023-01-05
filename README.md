@@ -1,4 +1,4 @@
-# minicle v2.0.0
+# minicle v2.1.0
 
 Minicle is a small helper library for CLI Node programs. Its main purpose is to
 parse commandline arguments -- including Git-style subcommands -- with a minimum
@@ -11,9 +11,6 @@ Other features are mainly cosmetic conveniences:
 - Convenient BBS-style markup for ANSI colors
 - A generic but colorful error message template
 
-**Breaking changes in 2.0.0:** Version 2.0.0 is a major departure from 1.0.6. See
-the [changelog](#changelog) for details.
-
 ## Table of Contents
 
 - [Command line argument parsing](#cliparsing)
@@ -22,6 +19,7 @@ the [changelog](#changelog) for details.
     - [ansiMarkup](#ansimarkup_formal)
     - [ansiSubstr](#ansisubstr_formal)
     - [errmsg](#errmsg_formal)
+    - [outputHeader](#outputheader_formal)
     - [paragraphize](#paragraphize_formal)
     - [parseCliArgs](#parsecliargs_formal)
     - [plainLength](#plainLength_formal)
@@ -236,6 +234,21 @@ const errorLevels = [
 
 The various colors are specified using the color codes from `ansiMarkup`.
 
+### `outputHeader(text, style, boxColor, width)` <a name="outputheader_formal"></a>
+
+This is a simplified high-level wrapper around `textBox` for the special case of
+generating a colorful one-line text box to serve as a header for the output of a
+command line program.
+
+|argument  |description|
+|----------|-----------|
+| text     | The text to be displayed, which may include ANSI markup codes. This must be a single line, and will be truncated if necessary to fit within the box `width`. |
+| style    | One of `"basic"`, `"ascii"`, `"pcdos1"`, or `"pcdos2"` |
+| boxColor | The ANSI markup code to apply to the box outline, or `null` if none. |
+| width    | The width of the box, including the box outline. Defaults to `76`. |
+
+The result is automatically sent to `console.log()`.
+
 ### `paragraphize(text, options = { })` <a name="paragraphize_formal"></a>
 
 Takes a string and wraps and aligns it, returning the result as an array of
@@ -378,28 +391,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <!-- <a name="todo"></a>
 ## Todo
-
 * 2.1.0
-    * Added `textBoxSimple` as a convenience function for usage headers.
-    * Added more examples in the documentation.
-    * Fixed missing graphics in documentation.
-
-* 2.0.0
-    * Code
-        * Optimize and cleanup
-        * Tests
-        * Publication and packaging scripts
-    * Documentation
-        * Include `textBox` and other text-handling function examples.
-        * Relate examples to common use cases.
-* 2.1.0
-    * Fixed-format display utilities
-    * Filename wildcard support
-    * C version
+    * More code examples in docs
+    * document extraStyles
+* Fixed-format display utilities ???
+* Filename wildcard support
+* C version
 -->
 
 <a name="changelog"></a>
 ## Changelog
+
+2.1.0:
+
+* Added `outputHeader` as a convenience function for usage headers.
+* Added more examples in the documentation.
+* Fixed missing graphics in documentation.
 
 2.0.0:
 
