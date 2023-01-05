@@ -317,6 +317,10 @@ function paragraphize(text, opts = { }) {
     var indent = opts.indent ? opts.indent      : 0;
     var align  = opts.align  ? opts.align       : "left";
 
+    if(opts.join === undefined)
+        opts.join = false;
+    var join = opts.join ? true : false;
+
     if(opts.ignoreAnsiMarkup ? opts.ignoreAnsiMarkup : false)
         var length = plainLength;
     else
@@ -391,7 +395,7 @@ function paragraphize(text, opts = { }) {
         }
     }
 
-    return result;
+    return join ? result.join("\n") : result;
 }
 module.exports.paragraphize = paragraphize;
 

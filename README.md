@@ -197,6 +197,19 @@ values for both are as follows:
 | F  | Bright white                      |
 | X  | no change from the previous code. |
 
+For example
+
+```javascript
+console.log(
+    minicle.ansiMarkup("This text features both @0B@foreground@07@ and @2E@background@07@ colors.")
+);
+```
+
+will produce
+
+![ansiMarkup example](img/ansimarkup2.png)
+
+---
 
 ### `ansiSubstr(text, offset, length)` <a name="ansisubstr_formal"></a>
 
@@ -204,6 +217,8 @@ Essentially the same as `String.substr`, except that it knows about `ansiMarkup`
 codes and handles them gracefully. Takes `text` and returns the substring
 starting at `offset` and running for `length` characters with all color codes
 intact.
+
+---
 
 ### `errmsg(level, message, location = null, options = { })` <a name="errmsg_formal"></a>
 
@@ -218,8 +233,8 @@ If `location` is `null`, it will be omitted from output. By default, output is
 via `console.log`, but another function may be substituted by setting
 `options.output`.
 
-Also by default, there are four error levels named `"error"`, `"warn"`,
-`"info"`, and `"debug"`, and if `"error"` is given, the program will terminate
+Also by default, there are four error levels named `"fatal"`, `"warn"`,
+`"info"`, and `"debug"`, and if `"fatal"` is given, the program will terminate
 by calling `process.exit(1)`. To alter or replace the defaults, pass your own
 definitions in `options.levels`. The defaults look like this:
 
@@ -234,29 +249,79 @@ const errorLevels = [
 
 The various colors are specified using the color codes from `ansiMarkup`.
 
+---
+
 ### `outputHeader(text, style, boxColor, width)` <a name="outputheader_formal"></a>
 
 This is a simplified high-level wrapper around `textBox` for the special case of
 generating a colorful one-line text box to serve as a header for the output of a
 command line program.
 
-|argument  |description|
-|----------|-----------|
+| argument | description                                                                                                                                                  |
+|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | text     | The text to be displayed, which may include ANSI markup codes. This must be a single line, and will be truncated if necessary to fit within the box `width`. |
-| style    | One of `"basic"`, `"ascii"`, `"pcdos1"`, or `"pcdos2"` |
-| boxColor | The ANSI markup code to apply to the box outline, or `null` if none. |
-| width    | The width of the box, including the box outline. Defaults to `76`. |
+| style    | One of `"basic"`, `"ascii"`, `"pcdos1"`, or `"pcdos2"`                                                                                                       |
+| boxColor | The ANSI markup code to apply to the box outline, or `null` if none.                                                                                         |
+| width    | The width of the box, including the box outline. Defaults to `76`.                                                                                           |
 
-The result is automatically sent to `console.log()`.
+The result is automatically sent to `console.log()`. For example
+
+```javascript
+minicle.outputHeader("@0E@MyProg v1.2.0@07@ -- @0B@Processing for something made easy@07@", "pcdos2", "@0C@");
+```
+
+will produce
+
+![outputHeader example](img/outputHeader.png)
+
+---
 
 ### `paragraphize(text, options = { })` <a name="paragraphize_formal"></a>
 
 Takes a string and wraps and aligns it, returning the result as an array of
-lines. The options argument may contain `width` (defaults to 76), `indent`
-(defaults to 0), and `align`, which may be `"left"`, `"right"`, `"center"`, or
-`"full"`, and defaults to `"left"`. An additional option, `ignoreAnsiMarkup`, if
-true, will cause `ansiMarkup` codes to be ignored so that displayed line lengths
-are unaffected.
+lines.
+
+| option           | description                                                                                           |
+|------------------|-------------------------------------------------------------------------------------------------------|
+| width            | The width of the paragraph. Defaults is '76'.                                                         |
+| indent           | Number of characters to indent the first line. Default is '0'.                                        |
+| align            | May be `"left"`, `"right"`, `"center"`, or `"full"`, and defaults to `"left"`.                        |
+| ignoreAnsiMarkup | If `true`, ignore ANSI markup so that line lengths are unaffected. Default is `false`.                |
+| join             | If `true`, return a string with embedded newlines instead of an array of strings. Default is `false`. |
+
+The four `align` settings appear thus with a `width` of `32`:
+
+```
+LEFT: This is a short sample
+paragraph, intended for use in
+the documentation of Minicle.
+It's just long enough to
+demonstrate the paragraphize
+method.
+
+   RIGHT: This is a short sample
+  paragraph, intended for use in
+   the documentation of Minicle.
+        It's just long enough to
+    demonstrate the paragraphize
+                         method.
+
+ CENTER: This is a short sample
+ paragraph, intended for use in
+ the documentation of Minicle.
+    It's just long enough to
+  demonstrate the paragraphize
+            method.
+
+FULL:  This  is  a  short sample
+paragraph,  intended  for use in
+the  documentation  of  Minicle.
+It's   just   long   enough   to
+demonstrate   the   paragraphize
+method.
+```
+
+---
 
 ### `parseCliArgs(args, options)` <a name="parsecliargs_formal"></a>
 
@@ -331,10 +396,14 @@ On success, a structure like this is returned for simple switches:
 The only difference for git-style commands is that the `command` element
 will not be `null`.
 
+---
+
 ### `plainLength(text)` <a name="plainlength_formal"></a>
 
 A convenience function used internally, takes `text` and returns its
 length minus any of the codes used by `ansiMarkup`.
+
+---
 
 ### `textBox(text, style, opts)` <a name="textbox_formal"></a>
 
@@ -346,15 +415,90 @@ object named `extraStyles` which contains additional named styles, but you must
 pass the value instead of the key when using them.) The `options` argument may
 contain one or more of the following:
 
-|name            |description|
-|----------------|-----------|
-|width           |Total width of box, sides inclusive. Defaults to `76`.|
-|reflow          |If `true`, all contiguous blocks of text are rewrapped to fit within the box. Lines beginning with whitespace are not modified and may cause overflow on the right. Blank lines are unaltered. Defaults to `false`.|
-|noRight         |If `true`, omit the right side of the box. Defaults to `false`.|
-|ignoreAnsiMarkup|If true, expect the style to contain `ansiMarkup` codes and exclude them from character length calculations. Defaults to `false`.|
-|padding         |An array of character cell counts, [ _top_, _right_, _bottom_, _left_ ] to use for padding. Defaults to `[0, 1, 0, 1]`.|
+| option           |description                                                                                                                                                                                                         |
+|------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| width            | Total width of box, sides inclusive. Defaults to `76`.                                                                                                                                                             |
+| reflow           | If `true`, all contiguous blocks of text are rewrapped to fit within the box. Lines beginning with whitespace are not modified and may cause overflow on the right. Blank lines are unaltered. Defaults to `false`.|
+| noRight          | If `true`, omit the right side of the box. Defaults to `false`.                                                                                                                                                    |
+| ignoreAnsiMarkup | If true, expect the style to contain `ansiMarkup` codes and exclude them from character length calculations. Defaults to `false`.                                                                                  |
+| padding          | An array of character cell counts, [ _top_, _right_, _bottom_, _left_ ] to use for padding. Defaults to `[0, 1, 0, 1]`.                                                                                            |
 
 The result is returned as an array of lines.
+
+For example
+
+```javascript
+console.log(minicle.textBox("basic style",  "basic",  { width: 20 }).join("\n") + "\n");
+console.log(minicle.textBox("ascii style",  "ascii",  { width: 20 }).join("\n") + "\n");
+console.log(minicle.textBox("pcdos1 style", "pcdos1", { width: 20 }).join("\n") + "\n");
+console.log(minicle.textBox("pcdos2 style", "pcdos2", { width: 20 }).join("\n") + "\n");
+```
+
+will yield
+
+```
+====================
+= basic style      =
+====================
+
++------------------+
+| ascii style      |
++------------------+
+
+┌──────────────────┐
+│ pcdos1 style     │
+└──────────────────┘
+
+╔══════════════════╗
+║ pcdos2 style     ║
+╚══════════════════╝
+```
+
+As a guide to designing your own styles, here is how the built-in styles are defined:
+
+```javascript
+const styles = {
+    //         0    1    2    3    4    5    6    7        0 1 2     TL TC TR
+    //        TL   TC   TR    R   BR   BC   BL    L        7   3     ML    MR
+    basic:  [ "=", "=", "=", "=", "=", "=", "=", "=" ], // 6 5 4     BL BC BR
+    ascii:  [ "+", "-", "+", "|", "+", "-", "+", "|" ],
+    pcdos1: [ "┌", "─", "┐", "│", "┘", "─", "└", "│" ],
+    pcdos2: [ "╔", "═", "╗", "║", "╝", "═", "╚", "║" ],
+};
+```
+
+Minicle also exports an object named `extraStyles` which contains additional
+named styles, but you must pass the value instead of the key when using them:
+
+```javascript
+var lines = minicle.textBox("extra example", minicle.extraStyles.lcAsciiGap, { width: 20 })
+```
+
+At present (version 2.1.0), these are all for generating comment blocks in C-like languages:
+
+```
+// +---------------+    //╔════════════════╗    //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡    //==================
+// | lcAsciiGap    |    //║ lcPcdos2NoGap  ║    // lcOpenIdent          //= lcClosedEqual  =
+// +---------------+    //╚════════════════╝    //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡    //==================
+
+//+----------------+    //------------------    //##################    //≡=≡=≡=≡=≡=≡=≡=≡=≡=
+//| lcAsciiNoGap   |    // lcOpenDash           // lcOpenHash           //≡ lcClosedEqId   ≡
+//+----------------+    //------------------    //##################    //≡=≡=≡=≡=≡=≡=≡=≡=≡=
+
+// ┌───────────────┐    //=-=-=-=-=-=-=-=-=-    //@@@@@@@@@@@@@@@@@@    //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+// │ lcPcdos1Gap   │    // lcOpenDashEq         // lcOpenAt             //≡ lcClosedIdent  ≡
+// └───────────────┘    //=-=-=-=-=-=-=-=-=-    //@@@@@@@@@@@@@@@@@@    //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+//┌────────────────┐    //==================    //------------------    //##################
+//│ lcPcdos1NoGap  │    // lcOpenEqual          //- lcClosedDash   -    //# lcClosedHash   #
+//└────────────────┘    //==================    //------------------    //##################
+
+// ╔═══════════════╗    //≡=≡=≡=≡=≡=≡=≡=≡=≡=    //=-=-=-=-=-=-=-=-=-    //@@@@@@@@@@@@@@@@@@
+// ║ lcPcdos2Gap   ║    // lcOpenEqId           //= lcClosedDashEq =    //@ lcClosedAt     @
+// ╚═══════════════╝    //≡=≡=≡=≡=≡=≡=≡=≡=≡=    //=-=-=-=-=-=-=-=-=-    //@@@@@@@@@@@@@@@@@@
+```
+
+---
 
 ### `textLine(width = 76, style = "basic", ignoreAnsiMarkup = false)` <a name="textline_formal"></a>
 
@@ -391,9 +535,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <!-- <a name="todo"></a>
 ## Todo
-* 2.1.0
-    * More code examples in docs
-    * document extraStyles
 * Fixed-format display utilities ???
 * Filename wildcard support
 * C version
