@@ -436,23 +436,7 @@ console.log(minicle.textBox("pcdos2 style", "pcdos2", { width: 20 }).join("\n") 
 
 will yield
 
-```
-====================
-= basic style      =
-====================
-
-+------------------+
-| ascii style      |
-+------------------+
-
-┌──────────────────┐
-│ pcdos1 style     │
-└──────────────────┘
-
-╔══════════════════╗
-║ pcdos2 style     ║
-╚══════════════════╝
-```
+![default style examples](img/defaultStyles.png)
 
 As a guide to designing your own styles, here is how the built-in styles are defined:
 
@@ -476,27 +460,7 @@ var lines = minicle.textBox("extra example", minicle.extraStyles.lcAsciiGap, { w
 
 At present (version 2.1.0), these are all for generating comment blocks in C-like languages:
 
-```
-// +---------------+    //╔════════════════╗    //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡    //==================
-// | lcAsciiGap    |    //║ lcPcdos2NoGap  ║    // lcOpenIdent          //= lcClosedEqual  =
-// +---------------+    //╚════════════════╝    //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡    //==================
-
-//+----------------+    //------------------    //##################    //≡=≡=≡=≡=≡=≡=≡=≡=≡=
-//| lcAsciiNoGap   |    // lcOpenDash           // lcOpenHash           //≡ lcClosedEqId   ≡
-//+----------------+    //------------------    //##################    //≡=≡=≡=≡=≡=≡=≡=≡=≡=
-
-// ┌───────────────┐    //=-=-=-=-=-=-=-=-=-    //@@@@@@@@@@@@@@@@@@    //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
-// │ lcPcdos1Gap   │    // lcOpenDashEq         // lcOpenAt             //≡ lcClosedIdent  ≡
-// └───────────────┘    //=-=-=-=-=-=-=-=-=-    //@@@@@@@@@@@@@@@@@@    //≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
-
-//┌────────────────┐    //==================    //------------------    //##################
-//│ lcPcdos1NoGap  │    // lcOpenEqual          //- lcClosedDash   -    //# lcClosedHash   #
-//└────────────────┘    //==================    //------------------    //##################
-
-// ╔═══════════════╗    //≡=≡=≡=≡=≡=≡=≡=≡=≡=    //=-=-=-=-=-=-=-=-=-    //@@@@@@@@@@@@@@@@@@
-// ║ lcPcdos2Gap   ║    // lcOpenEqId           //= lcClosedDashEq =    //@ lcClosedAt     @
-// ╚═══════════════╝    //≡=≡=≡=≡=≡=≡=≡=≡=≡=    //=-=-=-=-=-=-=-=-=-    //@@@@@@@@@@@@@@@@@@
-```
+![extraStyles examples](img/extraStyles.png)
 
 ---
 
@@ -542,6 +506,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <a name="changelog"></a>
 ## Changelog
+
+2.1.1: Added graphical representations of ASCII art that the NPM Markdown renderer was messing up.
 
 2.1.0:
 
