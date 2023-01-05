@@ -353,7 +353,7 @@ performing character length calculations.
 
 ## License <a name="license"></a>
 
-Copyright 2019-2020 Erich Waidthaler and subsequent contributors
+Copyright 2019-2023 Eric O'Dell and subsequent contributors
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
@@ -378,6 +378,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <!-- <a name="todo"></a>
 ## Todo
+
+* 2.1.0
+    * Added `textBoxSimple` as a convenience function for usage headers.
+    * Added more examples in the documentation.
+    * Fixed missing graphics in documentation.
 
 * 2.0.0
     * Code
