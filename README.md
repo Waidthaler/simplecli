@@ -5,6 +5,8 @@ parse commandline arguments -- including Git-style subcommands -- with a minimum
 of fuss and a maximum of flexibility. There are certainly a few edge cases it does
 not handle, but it should be adequate for the vast majority of programs.
 
+![Minicle logo](img/minicle.png)
+
 Other features are mainly cosmetic conveniences:
 
 - Runtime header output
