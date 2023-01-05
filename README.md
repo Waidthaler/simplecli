@@ -1,4 +1,4 @@
-# minicle v2.1.0
+# minicle v2.1.2
 
 Minicle is a small helper library for CLI Node programs. Its main purpose is to
 parse commandline arguments -- including Git-style subcommands -- with a minimum
@@ -506,6 +506,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <a name="changelog"></a>
 ## Changelog
+
+2.1.2: Bumped version number.
 
 2.1.1: Added graphical representations of ASCII art that the NPM Markdown renderer was messing up.
 
