@@ -1,11 +1,11 @@
-# minicle v2.1.2
+# minicle v2.1.3
+
+![Minicle title](img/minicle_title.png)
 
 Minicle is a small helper library for CLI Node programs. Its main purpose is to
 parse commandline arguments -- including Git-style subcommands -- with a minimum
 of fuss and a maximum of flexibility. There are certainly a few edge cases it does
 not handle, but it should be adequate for the vast majority of programs.
-
-![Minicle logo](img/minicle.png)
 
 Other features are mainly cosmetic conveniences:
 
@@ -38,7 +38,7 @@ There are scads of CLI argument processors out there, so why another one? Mostly
 because the others aim to do too much and can be a pain to use when you just
 need something quick and simple, or worse, when you need to do something
 complicated that the original programmer didn't anticipate. All `parseCliArgs`
-it does is parse CLI options. It doesn't handle exotic edge cases, validate
+does is parse CLI options. It doesn't handle exotic edge cases, validate
 arguments, or anything else.
 
 What it does:
